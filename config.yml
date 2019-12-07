@@ -1,0 +1,5 @@
+email_settings:
+  email: "myemail"
+  password: "password"
+  name: "rubber-duck-999"
+  to_email: "external@gmail"
