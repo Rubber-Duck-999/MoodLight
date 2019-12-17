@@ -9,7 +9,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh '''cd src
+                sh '''GOPATH = "${pwd}"
+                    cd src
                     go version
                     go get -v github.com/streadway/amqp
                     go get -v github.com/sirupsen/logrus
