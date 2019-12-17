@@ -9,18 +9,18 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh 'cd src'
-                sh 'go version'
-                sh 'go get -v github.com/streadway/amqp'
-                sh 'go get -v github.com/sirupsen/logrus'
-                sh 'go get -v github.com/scorredoira/email'
-                sh 'go get -v gopkg.in/yaml.v2'
-                sh 'go get -v github.com/akamensky/argparse'
-                sh 'go get -v github.com/clarketm/json'
-                sh 'ls'
-                sh 'pwd'
-                sh 'go install github.com/Rubber-Duck-999/exeFaultHandler'
-                sh 'go get -u -v github.com/golang/lint/golint'
+                sh '''cd src
+                    go version
+                    go get -v github.com/streadway/amqp
+                    go get -v github.com/sirupsen/logrus
+                    go get -v github.com/scorredoira/email
+                    go get -v gopkg.in/yaml.v2
+                    go get -v github.com/akamensky/argparse
+                    go get -v github.com/clarketm/json
+                    pwd
+                    go install github.com/Rubber-Duck-999/exeFaultHandler
+                    go get -u -v github.com/golang/lint/golint
+                '''
             }
         }
         stage('Test') {
