@@ -9,7 +9,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh '''GOPATH = "${pwd}"
+                sh '''export GOPATH = "pwd"
                     cd src
                     go version
                     go get -v github.com/streadway/amqp
