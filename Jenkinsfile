@@ -17,6 +17,8 @@ pipeline {
                 sh 'go get -v gopkg.in/yaml.v2'
                 sh 'go get -v github.com/akamensky/argparse'
                 sh 'go get -v github.com/clarketm/json'
+                sh 'ls'
+                sh 'pwd'
                 sh 'go install github.com/Rubber-Duck-999/exeFaultHandler'
                 sh 'go get -u -v github.com/golang/lint/golint'
             }
