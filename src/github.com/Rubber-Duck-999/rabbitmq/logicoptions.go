@@ -32,11 +32,12 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 
 func checkState() {
 	for message_id := range SubscribedMessagesMap {
-		log.Debug("Message id is: ", message_id)
-		log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 		if SubscribedMessagesMap[message_id].valid == true {
+			log.Debug("Message id is: ", message_id)
+			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
+				log.Debug("Received a network failure message")
 				messageFailure(message.SendEmailRoutine("Serious Network failure"))
 				SubscribedMessagesMap[message_id].valid = false
 
@@ -59,25 +60,40 @@ func checkState() {
 				log.Debug("Creating temp")
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
 				log.Debug("Converting json data")
-				PublishRequestPower("restart", message.Severity, CAMERAMONITOR)
-				log.Debug("Published Request Power")
-				SubscribedMessagesMap[message_id].valid = false
+				valid := PublishRequestPower("restart", message.Severity, CAMERAMONITOR)
+				if valid != "" {
+					SubscribedMessagesMap[message_id].valid = false
+					log.Warn("Failed to publish")
+				} else {
+					log.Debug("Published Request Power")
+				}
 
 			case SubscribedMessagesMap[message_id].routing_key == ISSUENOTICE:
 				var message IssueNotice
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				PublishRequestPower(message.action, message.severity, message.component)
-				SubscribedMessagesMap[message_id].valid = false
+				valid := PublishRequestPower(message.action, message.severity, message.component)
+				if valid != "" {
+					SubscribedMessagesMap[message_id].valid = false
+					log.Warn("Failed to publish")
+				} else {
+					log.Debug("Published Request Power")
+				}
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
 				message.SetState(monitor.state)
-				PublishEventFH(COMPONENT, UPDATESTATEERROR, getTime(), STATEUPDATESEVERITY)
-				SubscribedMessagesMap[message_id].valid = false
+				valid := PublishEventFH(COMPONENT, UPDATESTATEERROR, getTime(), STATEUPDATESEVERITY)
+				if valid != "" {
+					SubscribedMessagesMap[message_id].valid = false
+					log.Warn("Failed to publish")
+				} else {
+					log.Debug("Published Event Fault Handler")
+				}
 
 			default:
-				log.Debug("What?")
+				log.Debug("We were not expecting this message unvalidating")
+				SubscribedMessagesMap[message_id].valid = false
 			}
 		}
 	}

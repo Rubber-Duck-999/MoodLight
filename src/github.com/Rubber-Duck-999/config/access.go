@@ -1,8 +1,9 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
 	"os"
+
+	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -14,6 +15,7 @@ func Exists(name string) bool {
 	gopath := os.Getenv("GOPATH")
 	if gopath != "" {
 		fileCheck := gopath + "/" + name
+		log.Debug("We have been asked to check if this exists: ", fileCheck)
 		file, err := os.Stat(fileCheck)
 		if err == nil {
 			if os.IsNotExist(err) {

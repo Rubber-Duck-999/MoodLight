@@ -3,6 +3,7 @@ package rabbitmq
 import (
 	"time"
 
+	"github.com/Rubber-Duck-999/message"
 	"github.com/clarketm/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -14,11 +15,12 @@ var init_err error
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
-	//conn, init_err = amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, init_err = amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(init_err, "Failed to connect to RabbitMQ")
 
-	//ch, init_err = conn.Channel()
+	ch, init_err = conn.Channel()
 	failOnError(init_err, "Failed to open a channel")
+	message.SetState(true)
 }
 
 func failOnError(err error, msg string) {
@@ -124,7 +126,6 @@ func Subscribe() {
 				messages(d.RoutingKey, s)
 				log.Debug("Checking states of received messages")
 				checkState()
-				forever <- true
 			}
 			//This function is checked after to see if multiple errors occur then to
 			//through an event message
@@ -135,7 +136,8 @@ func Subscribe() {
 	}
 }
 
-func PublishRequestPower(this_power string, this_severity int, this_component string) {
+func PublishRequestPower(this_power string, this_severity int, this_component string) string {
+	failure := ""
 	requestPower, err := json.Marshal(&RequestPower{
 		Power:     this_power,
 		Severity:  this_severity,
@@ -143,16 +145,22 @@ func PublishRequestPower(this_power string, this_severity int, this_component st
 	failOnError(err, "Failed to convert RequestPower")
 	log.Debug(string(requestPower))
 
-	err = ch.Publish(
-		EXCHANGENAME, // exchange
-		REQUESTPOWER, // routing key
-		false,        // mandatory
-		false,        // immediate
-		amqp.Publishing{
-			ContentType: "application/json",
-			Body:        []byte(requestPower),
-		})
-	failOnError(err, "Failed to publish RequestPower topic")
+	if err == nil {
+		err = ch.Publish(
+			EXCHANGENAME, // exchange
+			REQUESTPOWER, // routing key
+			false,        // mandatory
+			false,        // immediate
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        []byte(requestPower),
+			})
+		if err != nil {
+			failOnError(err, "Failed to publish RequestPower topic")
+			failure = FAILUREPUBLISH
+		}
+	}
+	return failure
 }
 
 func PublishEventFH(component string, error_string string, time string, severity int) string {
@@ -178,10 +186,11 @@ func PublishEventFH(component string, error_string string, time string, severity
 					Body:        []byte(eventFH),
 				})
 			if err != nil {
-				failure = "Failed to publish EventFH topic"
+				log.Fatal(err)
+				failure = FAILUREPUBLISH
 			}
 		}
 	}
-	log.Fatal(failure)
+	log.Warn(failure)
 	return failure
 }

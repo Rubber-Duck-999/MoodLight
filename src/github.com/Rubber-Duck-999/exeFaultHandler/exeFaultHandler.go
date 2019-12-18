@@ -1,10 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/Rubber-Duck-999/config"
 	"github.com/akamensky/argparse"
 	log "github.com/sirupsen/logrus"
-	"os"
 
 	"github.com/Rubber-Duck-999/rabbitmq"
 )
