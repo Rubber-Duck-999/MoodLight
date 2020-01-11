@@ -31,4 +31,10 @@ pipeline {
             }
         }
     }
+    post {
+        failure {
+            emailext body: 'Failed to build FH', subject: 'Build Failure', to: '$DEFAULT_RECIPIENTS'
+        }
+    }
+    }
 }
