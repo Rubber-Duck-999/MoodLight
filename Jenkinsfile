@@ -27,7 +27,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'echo "Test"'
-                sh 'buildFaultHandler.sh'
+                sh './buildFaultHandler.sh'
             }
         }
     }
