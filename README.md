@@ -1,6 +1,6 @@
 # HouseGuard-FaultHandler
 
-HouseGuard-FaultHandler is the Golang components that is part of the HouseGuard solution. 
+HouseGuard-FaultHandler is the Golang component that is part of the HouseGuard solution. 
 It's role to respond to faults on the system and report them to the operator.
 
 ## Installation
