@@ -11,9 +11,9 @@ type MotionDetected struct {
 }
 
 type IssueNotice struct {
-	severity  int
-	component string
-	action    string
+	severity  int `json:"severity"`
+	component string `json:"component"`
+	action    string `json:"action"`
 }
 
 type MonitorState struct {

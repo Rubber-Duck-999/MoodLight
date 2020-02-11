@@ -15,12 +15,12 @@ var init_err error
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
-	conn, init_err = amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, init_err = amqp.Dial("amqp://guest:password@localhost:5672/")
 	failOnError(init_err, "Failed to connect to RabbitMQ")
 
 	ch, init_err = conn.Channel()
 	failOnError(init_err, "Failed to open a channel")
-	message.SetState(true)
+	message.SetState(false)
 }
 
 func failOnError(err error, msg string) {
@@ -64,6 +64,7 @@ func messages(routing_key string, value string) {
 
 func Subscribe() {
 	log.Trace("Beginning rabbitmq initialisation")
+	log.Trace(init_err)
 	if init_err == nil {
 		var topics = [4]string{
 			FAILURE,

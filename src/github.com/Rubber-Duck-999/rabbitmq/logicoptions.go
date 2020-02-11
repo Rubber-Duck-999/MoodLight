@@ -71,7 +71,8 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == ISSUENOTICE:
 				var message IssueNotice
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				valid := PublishRequestPower(message.action, message.severity, message.component)
+				valid := PublishRequestPower("SHUTDOWN", message.severity, message.component)
+				log.Debug("We will inform them to shutdown: ", message.component)
 				if valid != "" {
 					SubscribedMessagesMap[message_id].valid = false
 					log.Warn("Failed to publish")
@@ -90,6 +91,11 @@ func checkState() {
 				} else {
 					log.Debug("Published Event Fault Handler")
 				}
+
+			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
+				messageFailure(message.SendEmailRoutine("Motion Detected"))
+				messageFailure(message.SendSMS("Motion Detected"))
+				SubscribedMessagesMap[message_id].valid = false
 
 			default:
 				log.Debug("We were not expecting this message unvalidating")
