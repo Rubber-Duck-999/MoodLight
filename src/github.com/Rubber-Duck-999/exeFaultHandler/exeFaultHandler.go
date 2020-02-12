@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	log.SetLevel(log.TraceLevel)
-	log.Trace("FH - Beginning to run Fault Handler Program")
+	log.SetLevel(log.DebugLevel)
+	log.Warn("FH - Beginning to run Fault Handler Program")
 	parser := argparse.NewParser("file", "Config file for runtime purpose")
 	// Create string flag
 	f := parser.String("f", "config", &argparse.Options{Required: true, Help: "Necessary config"})

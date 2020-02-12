@@ -7,17 +7,17 @@ type FailureMessage struct {
 }
 
 type MotionDetected struct {
-	time string
+	Time string
 }
 
 type IssueNotice struct {
-	severity  int `json:"severity"`
-	component string `json:"component"`
-	action    string `json:"action"`
+	Severity  int `json:"severity"`
+	Component string `json:"component"`
+	Action    string `json:"action"`
 }
 
 type MonitorState struct {
-	state bool
+	State bool
 }
 
 type RequestPower struct {

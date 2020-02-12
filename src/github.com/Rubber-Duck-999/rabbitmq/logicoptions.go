@@ -57,9 +57,7 @@ func checkState() {
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECAMERA:
 				var message FailureMessage
-				log.Debug("Creating temp")
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				log.Debug("Converting json data")
 				valid := PublishRequestPower("restart", message.Severity, CAMERAMONITOR)
 				if valid != "" {
 					SubscribedMessagesMap[message_id].valid = false
@@ -70,26 +68,30 @@ func checkState() {
 
 			case SubscribedMessagesMap[message_id].routing_key == ISSUENOTICE:
 				var message IssueNotice
-				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				valid := PublishRequestPower("SHUTDOWN", message.severity, message.component)
-				log.Debug("We will inform them to shutdown: ", message.component)
-				if valid != "" {
-					SubscribedMessagesMap[message_id].valid = false
-					log.Warn("Failed to publish")
+				err := json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
+				if err == nil {
+					valid := PublishRequestPower("restart", message.Severity, message.Component)
+					log.Info("We will inform them to shutdown: ", message.Component)
+					if valid != "" {
+						log.Warn("Failed to publish")
+					} else {
+						SubscribedMessagesMap[message_id].valid = false
+						log.Info("Published Request Power")
+					}
 				} else {
-					log.Debug("Published Request Power")
+					log.Warn(err)
 				}
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
-				message.SetState(monitor.state)
+				message.SetState(monitor.State)
 				valid := PublishEventFH(COMPONENT, UPDATESTATEERROR, getTime(), STATEUPDATESEVERITY)
 				if valid != "" {
-					SubscribedMessagesMap[message_id].valid = false
 					log.Warn("Failed to publish")
 				} else {
 					log.Debug("Published Event Fault Handler")
+					SubscribedMessagesMap[message_id].valid = false
 				}
 
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
@@ -98,7 +100,8 @@ func checkState() {
 				SubscribedMessagesMap[message_id].valid = false
 
 			default:
-				log.Debug("We were not expecting this message unvalidating")
+				log.Warn("We were not expecting this message unvalidating: ", 
+					SubscribedMessagesMap[message_id].routing_key)
 				SubscribedMessagesMap[message_id].valid = false
 			}
 		}

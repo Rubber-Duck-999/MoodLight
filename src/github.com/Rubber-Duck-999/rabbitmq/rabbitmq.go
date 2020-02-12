@@ -38,22 +38,20 @@ func getTime() string {
 }
 
 func messages(routing_key string, value string) {
-	log.Debug("Adding messages to map")
+	log.Warn("Adding messages to map")
 	if SubscribedMessagesMap == nil {
+		log.Warn("Creation of messages map")
 		SubscribedMessagesMap = make(map[uint32]*MapMessage)
 		messages(routing_key, value)
 	} else {
 		if key_id >= 0 {
 			_, valid := SubscribedMessagesMap[key_id]
 			if valid {
-				log.Debug("Key already exists, checking next field")
+				log.Debug("Key already exists, checking next field: ", key_id)
 				key_id++
 				messages(routing_key, value)
 			} else {
-				log.WithFields(log.Fields{
-					"Value": value,
-				}).Debug("Received this string")
-				log.Debug("Key does not exists, adding new field")
+				log.Debug("Key does not exists, adding new field: ", key_id)
 				entry := MapMessage{value, routing_key, getTime(), true}
 				SubscribedMessagesMap[key_id] = &entry
 				key_id++
@@ -64,7 +62,7 @@ func messages(routing_key string, value string) {
 
 func Subscribe() {
 	log.Trace("Beginning rabbitmq initialisation")
-	log.Trace(init_err)
+	log.Warn("Rabbitmq error:", init_err)
 	if init_err == nil {
 		var topics = [4]string{
 			FAILURE,
@@ -121,8 +119,8 @@ func Subscribe() {
 
 		go func() {
 			for d := range msgs {
-				log.Debug("Sending message to callback")
-				log.Debug(d.RoutingKey)
+				log.Trace("Sending message to callback")
+				log.Trace(d.RoutingKey)
 				s := string(d.Body[:])
 				messages(d.RoutingKey, s)
 				log.Debug("Checking states of received messages")
@@ -132,7 +130,7 @@ func Subscribe() {
 			//through an event message
 		}()
 
-		log.Printf(" [*] Waiting for logs. To exit press CTRL+C")
+		log.Trace(" [*] Waiting for logs. To exit press CTRL+C")
 		<-forever
 	}
 }

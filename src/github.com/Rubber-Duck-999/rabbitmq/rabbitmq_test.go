@@ -55,3 +55,15 @@ func TestLogicValid(t *testing.T) {
 		t.Error("Failure")
 	}
 }
+
+func TestLogicRequestPower(t *testing.T) {
+	value := "{ 'time': 12:00:34, 'type': 'Camera', 'severity': 3 }"
+	messages("Event.FH", value)
+	checkState()
+	if SubscribedMessagesMap[3].valid == true {
+		t.Error("Failure")
+	} else if SubscribedMessagesMap[2].routing_key == EVENTFH {
+		t.Log(SubscribedMessagesMap[2].routing_key)
+		t.Error("Failure")
+	}
+}
