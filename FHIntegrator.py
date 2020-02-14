@@ -13,7 +13,7 @@ import subprocess
 # This is to show how the FH could manage on
 # its necessary pub & sub topics with rabbitmq
 
-### Setup of FH INtegrator connection
+### Setup of FH Integrator connection
 print("## Beginning FH Integrator")
 credentials = pika.PlainCredentials('guest', 'password')
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost', 5672, '/', credentials))
