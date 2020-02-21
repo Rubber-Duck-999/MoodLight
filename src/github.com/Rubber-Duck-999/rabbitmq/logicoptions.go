@@ -22,7 +22,7 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 	message.SetSettings(email, password, email, from_name, to_email)
 	setup_invalid := message.TestEmail()
 	log.Debug("Email test success : ", !setup_invalid)
-	if setup_invalid == true {
+	if setup_invalid {
 		shutdown_valid = true
 		messageFailure(shutdown_valid)
 		log.Fatal("We have major flaw - shutting down node and diagonose")

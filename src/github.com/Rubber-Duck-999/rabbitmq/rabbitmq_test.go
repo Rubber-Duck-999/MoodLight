@@ -67,3 +67,43 @@ func TestLogicRequestPower(t *testing.T) {
 		t.Error("Failure")
 	}
 }
+
+func TestGetTime(t *testing.T) {
+	time := getTime()
+	if !strings.Contains(time, "2020") {
+		t.Error("Failure")
+	}
+}
+
+func TestGetTimeFail(t *testing.T) {
+	time := getTime()
+	if strings.Contains(time, ":") {
+		t.Error("Failure")
+	}
+}
+
+func TestEventFH(t *testing.T) {
+	valid := PublishEventFH(COMPONENT, UPDATESTATEERROR, getTime(), STATEUPDATESEVERITY)
+	if valid != "" {
+		t.Error("Failure")
+	}
+}
+
+func TestEmailSettings(t *testing.T) {
+	shutdown_valid := SetEmailSettings("email_to", "password", "from_name", "to_email")
+	if shutdown_valid {
+		t.Error("Failure")
+	}
+}
+
+func TestIssueNotice(t *testing.T) {
+	value := "{ 'severity': 1, 'component': 'CM', 'action': null }"
+	messages("Issue.Notice", value)
+	if SubscribedMessagesMap[4].valid == false {
+		t.Error("Failure")
+	} else if SubscribedMessagesMap[4].routing_key == EVENTFH {
+		t.Log(SubscribedMessagesMap[4].routing_key)
+		t.Error("Failure")
+	}
+}
+
