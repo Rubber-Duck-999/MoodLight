@@ -2,6 +2,7 @@ package message
 
 import (
 	"github.com/scorredoira/email"
+	"github.com/sfreiberg/gotwilio"
 	log "github.com/sirupsen/logrus"
 	"net/mail"
 	"net/smtp"
@@ -61,6 +62,14 @@ func TestEmail() bool {
 func SendSMS(issue string) bool {
 	if _state == true {
 		log.Debug("Sending important SMS")
+		accountSid := "ABC123..........ABC123"
+		authToken := "ABC123..........ABC123"
+		twilio := gotwilio.NewTwilioClient(accountSid, authToken)
+
+		from := "+15555555555"
+		to := "+15555555555"
+		message := "Welcome to gotwilio!"
+		twilio.SendSMS(from, to, message, "", "")
 	}
 	return false
 }

@@ -3,6 +3,11 @@
 /src/github.com/scorredoira
 /src/github.com/sirupsen
 /src/github.com/streadway
+/src/github.com/dgrijalva
+/src/github.com/google
+/src/github.com/gorilla
+/src/github.com/sfreiberg
+/src/github.com/sirupsen
 /src/golang.org/*
 /src/gopkg.in/*
 /bin/*
