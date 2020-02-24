@@ -3,3 +3,8 @@ email_settings:
   password: "password"
   name: "rubber-duck-999"
   to_email: "external@gmail"
+message_settings:
+  sid: "999"
+  toke: "999"
+  from_num: "000"
+  to_num: "000"

@@ -34,9 +34,18 @@ func main() {
 		os.Exit(2)
 	}
 	log.Trace(data.EmailSettings.Email)
-	rabbitmq.SetEmailSettings(data.EmailSettings.Email,
-		data.EmailSettings.Password,
-		data.EmailSettings.Name,
-		data.EmailSettings.To_email)
-	rabbitmq.Subscribe()
+	if data.EmailSettings.Email != "" {
+		rabbitmq.SetEmailSettings(data.EmailSettings.Email,
+			data.EmailSettings.Password,
+			data.EmailSettings.Name,
+			data.EmailSettings.To_email)
+		rabbitmq.SetMessageSettings(data.MessageSettings.Sid,
+			data.MessageSettings.Token,
+			data.MessageSettings.From_num,
+			data.MessageSettings.To_num)
+		rabbitmq.Subscribe()
+	} else {
+		log.Error("File not converted correctly")
+		os.Exit(2)
+	}
 }

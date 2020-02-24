@@ -26,7 +26,7 @@ func TestSendFailureEmail(t *testing.T) {
 // Check that a test sms will
 // to send as no details have been inputted
 func TestSendSMSFail(t *testing.T) {
-	if SendSMS("") == true {
+	if SendSMS("") == false {
 		t.Error("Failure")
 	}
 }

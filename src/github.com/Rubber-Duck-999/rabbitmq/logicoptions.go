@@ -30,6 +30,10 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 	return shutdown_valid
 }
 
+func SetMessageSettings(sid string, token string, from_num string, to_num string) {
+	message.SetMessageSettings(sid, token, from_num, to_num)
+}
+
 func checkState() {
 	for message_id := range SubscribedMessagesMap {
 		if SubscribedMessagesMap[message_id].valid == true {
@@ -43,7 +47,6 @@ func checkState() {
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
 				messageFailure(message.SendEmailRoutine("Serious Database failure"))
-				messageFailure(message.SendSMS("Serious Database failure"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECOMPONENT:
@@ -52,7 +55,6 @@ func checkState() {
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
 				messageFailure(message.SendEmailRoutine("Serious Access Violation"))
-				messageFailure(message.SendSMS("Serious Access Violation"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECAMERA:
@@ -100,7 +102,7 @@ func checkState() {
 				SubscribedMessagesMap[message_id].valid = false
 
 			default:
-				log.Warn("We were not expecting this message unvalidating: ", 
+				log.Warn("We were not expecting this message unvalidating: ",
 					SubscribedMessagesMap[message_id].routing_key)
 				SubscribedMessagesMap[message_id].valid = false
 			}

@@ -16,6 +16,10 @@ var _body string
 var _from_email string
 var _from_name string
 var _to_email string
+var _sid string
+var _token string
+var _from_num string
+var _to_num string
 
 func init() {
 	log.Trace("Initialised message package")
@@ -27,6 +31,10 @@ func init() {
 	_from_email = ""
 	_from_name = ""
 	_to_email = ""
+	_token = ""
+	_sid = ""
+	_from_num = ""
+	_to_num = ""
 }
 
 func SetState(state bool) {
@@ -41,7 +49,8 @@ func getState() bool {
 	return _state
 }
 
-func SetSettings(email string, password string, from_email string, from_name string, to_email string) {
+func SetSettings(email string, password string, from_email string,
+	from_name string, to_email string) {
 	log.Trace("Setting settings")
 	_subject = "Test Email"
 	_body = ""
@@ -52,6 +61,13 @@ func SetSettings(email string, password string, from_email string, from_name str
 	_to_email = to_email
 }
 
+func SetMessageSettings(sid string, token string, from_num string, to_num string) {
+	_sid = sid
+	_token = token
+	_from_num = from_num
+	_to_num = to_num
+}
+
 func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
@@ -60,18 +76,20 @@ func TestEmail() bool {
 }
 
 func SendSMS(issue string) bool {
-	if _state == true {
+	state := false
+	if _state {
 		log.Debug("Sending important SMS")
-		accountSid := "ABC123..........ABC123"
-		authToken := "ABC123..........ABC123"
-		twilio := gotwilio.NewTwilioClient(accountSid, authToken)
+		twilio := gotwilio.NewTwilioClient(_sid, _token)
 
-		from := "+15555555555"
-		to := "+15555555555"
 		message := "Welcome to gotwilio!"
-		twilio.SendSMS(from, to, message, "", "")
+		_, _, err := twilio.SendSMS(_from_num, _to_num, message, "", "")
+		if err != nil {
+			return state
+		} else {
+			state = true
+		}
 	}
-	return false
+	return state
 }
 
 func SendEmailRoutine(issue string) bool {
