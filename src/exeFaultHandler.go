@@ -3,11 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/Rubber-Duck-999/config"
 	"github.com/akamensky/argparse"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/Rubber-Duck-999/rabbitmq"
 )
 
 func main() {
@@ -26,24 +23,24 @@ func main() {
 	}
 
 	file := *f
-	var data config.ConfigTypes
-	if config.Exists(file) {
-		config.GetData(&data, file)
+	var data ConfigTypes
+	if Exists(file) {
+		GetData(&data, file)
 	} else {
 		log.Error("File doesn't exist")
 		os.Exit(2)
 	}
 	log.Trace(data.EmailSettings.Email)
 	if data.EmailSettings.Email != "" {
-		rabbitmq.SetEmailSettings(data.EmailSettings.Email,
+		SetEmailSettings(data.EmailSettings.Email,
 			data.EmailSettings.Password,
 			data.EmailSettings.Name,
 			data.EmailSettings.To_email)
-		rabbitmq.SetMessageSettings(data.MessageSettings.Sid,
+		SetMessageSettingsLogic(data.MessageSettings.Sid,
 			data.MessageSettings.Token,
 			data.MessageSettings.From_num,
 			data.MessageSettings.To_num)
-		rabbitmq.Subscribe()
+		Subscribe()
 	} else {
 		log.Error("File not converted correctly")
 		os.Exit(2)

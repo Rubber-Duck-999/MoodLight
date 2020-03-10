@@ -1,9 +1,8 @@
-package rabbitmq
+package main
 
 import (
 	"time"
 
-	"github.com/Rubber-Duck-999/message"
 	"github.com/clarketm/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -20,7 +19,7 @@ func init() {
 
 	ch, init_err = conn.Channel()
 	failOnError(init_err, "Failed to open a channel")
-	message.SetState(false)
+	SetState(false)
 }
 
 func failOnError(err error, msg string) {

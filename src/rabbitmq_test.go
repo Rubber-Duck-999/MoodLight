@@ -1,6 +1,6 @@
 // rabbitmq_test.go
 
-package rabbitmq
+package main
 
 import (
 	"strings"

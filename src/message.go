@@ -1,4 +1,4 @@
-package message
+package main
 
 import (
 	"github.com/scorredoira/email"

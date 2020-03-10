@@ -1,6 +1,6 @@
 // message_test.go
 
-package message
+package main
 
 import (
 	"testing"

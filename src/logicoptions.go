@@ -1,9 +1,7 @@
-package rabbitmq
+package main
 
 import (
 	"encoding/json"
-
-	"github.com/Rubber-Duck-999/message"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -19,8 +17,8 @@ func messageFailure(issue bool) string {
 func SetEmailSettings(email string, password string, from_name string, to_email string) bool {
 	shutdown_valid := false
 	log.Trace("Email is: ", email)
-	message.SetSettings(email, password, email, from_name, to_email)
-	setup_invalid := message.TestEmail()
+	SetSettings(email, password, email, from_name, to_email)
+	setup_invalid := TestEmail()
 	log.Debug("Email test success : ", !setup_invalid)
 	if setup_invalid {
 		shutdown_valid = true
@@ -30,8 +28,8 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 	return shutdown_valid
 }
 
-func SetMessageSettings(sid string, token string, from_num string, to_num string) {
-	message.SetMessageSettings(sid, token, from_num, to_num)
+func SetMessageSettingsLogic(sid string, token string, from_num string, to_num string) {
+	SetMessageSettings(sid, token, from_num, to_num)
 }
 
 func checkState() {
@@ -42,19 +40,19 @@ func checkState() {
 			switch {
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
 				log.Debug("Received a network failure message")
-				messageFailure(message.SendEmailRoutine("Serious Network failure"))
+				messageFailure(SendEmailRoutine("Serious Network failure"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
-				messageFailure(message.SendEmailRoutine("Serious Database failure"))
+				messageFailure(SendEmailRoutine("Serious Database failure"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECOMPONENT:
-				messageFailure(message.SendEmailRoutine("Serious Component failure"))
+				messageFailure(SendEmailRoutine("Serious Component failure"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
-				messageFailure(message.SendEmailRoutine("Serious Access Violation"))
+				messageFailure(SendEmailRoutine("Serious Access Violation"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECAMERA:
@@ -87,7 +85,7 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
-				message.SetState(monitor.State)
+				SetState(monitor.State)
 				valid := PublishEventFH(COMPONENT, UPDATESTATEERROR, getTime(), STATEUPDATESEVERITY)
 				if valid != "" {
 					log.Warn("Failed to publish")
@@ -97,8 +95,8 @@ func checkState() {
 				}
 
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
-				messageFailure(message.SendEmailRoutine("Motion Detected"))
-				messageFailure(message.SendSMS("Motion Detected"))
+				messageFailure(SendEmailRoutine("Motion Detected"))
+				messageFailure(SendSMS("Motion Detected"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			default:

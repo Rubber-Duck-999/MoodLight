@@ -1,6 +1,6 @@
 // access_test.go (access-check)
 
-package config
+package main
 
 import (
 	"testing"
