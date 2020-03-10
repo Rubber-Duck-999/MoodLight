@@ -17,4 +17,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build
-      run: sh "./buildFaultHandler.sh"
+      run: |
+            cd src
+            go build -v
