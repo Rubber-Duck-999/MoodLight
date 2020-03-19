@@ -9,13 +9,15 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh './buildFaultHandler.sh'
+                sh 'cd src'
+                sh 'go build'
             }
         }
         stage('Test') {
             steps {
                 sh 'echo "Test"'
-                sh './testFaultHandler.sh'
+                sh 'cd src'
+                sh 'go build'
             }
         }
     }
