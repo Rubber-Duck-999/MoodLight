@@ -1,10 +1,6 @@
 pipeline {
     agent any
     
-    environment {
-        GOPATH = "${pwd}"
-    }
-    
     stages {
         stage('Build') {
             steps {
