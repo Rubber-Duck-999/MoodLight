@@ -4,7 +4,7 @@ pipeline {
     environment {
         GOPATH = "${pwd}"
     }
-    
+    /*
     stages {
         stage('Build') {
             steps {
@@ -25,5 +25,5 @@ pipeline {
         failure {
             emailext body: 'Failed to build FH', subject: 'Build Failure', to: '$DEFAULT_RECIPIENTS'
         }
-    }
+    }*/
 }
