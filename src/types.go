@@ -43,7 +43,7 @@ type RequestPower struct {
 
 type EventFH struct {
 	Component    string
-	Error_string string
+	Message      string
 	Time         string
 	Severity     int
 }
