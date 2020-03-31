@@ -161,12 +161,12 @@ func PublishRequestPower(this_power string, this_severity int, this_component st
 	return failure
 }
 
-func PublishEventFH(component string, error_string string, time string, severity int) string {
+func PublishEventFH(component string, message string, time string, severity int) string {
 	failure := ""
 
 	eventFH, err := json.Marshal(&EventFH{
 		Component:    component,
-		Error_string: error_string,
+		Message:      message,
 		Time:         time,
 		Severity:     severity})
 	if err != nil {
