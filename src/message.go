@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/scorredoira/email"
 	"github.com/sfreiberg/gotwilio"
 	log "github.com/sirupsen/logrus"
@@ -20,6 +22,10 @@ var _sid string
 var _token string
 var _from_num string
 var _to_num string
+var _year int 
+var _month time.Month
+var _day int
+var _messages_sent int
 
 func init() {
 	log.Trace("Initialised message package")
@@ -66,6 +72,7 @@ func SetMessageSettings(sid string, token string, from_num string, to_num string
 	_token = token
 	_from_num = from_num
 	_to_num = to_num
+	setDate()
 }
 
 func TestEmail() bool {
@@ -77,7 +84,7 @@ func TestEmail() bool {
 
 func SendSMS(issue string) bool {
 	state := false
-	if _state {
+	if _state && checkCanSend() {
 		log.Debug("Sending important SMS")
 		twilio := gotwilio.NewTwilioClient(_sid, _token)
 
@@ -92,6 +99,31 @@ func SendSMS(issue string) bool {
 	return state
 }
 
+func setDate() {
+	_year, _month, _day = time.Now().Date()
+	_messages_sent = 0
+}
+
+func checkCanSend() bool {
+	year, month, day := time.Now().Date()
+	if year == _year {
+		if month == _month {
+			if day == _day {
+				if _messages_sent <= 10 {
+					_messages_sent++
+					return true
+				} else {
+					return false
+				}
+			} else {
+				setDate()
+				checkCanSend()
+			}
+		}
+	}
+	return false
+}
+
 func SendEmailRoutine(issue string) bool {
 	event := sendEmail(issue)
 	return event
@@ -100,7 +132,7 @@ func SendEmailRoutine(issue string) bool {
 func sendEmail(issue string) bool {
 	// compose the message
 	fatal := false
-	if _state {
+	if _state && checkCanSend() {
 		_body = issue
 		m := email.NewMessage(_subject, _body)
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
