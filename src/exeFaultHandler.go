@@ -40,6 +40,10 @@ func main() {
 			data.MessageSettings.Token,
 			data.MessageSettings.From_num,
 			data.MessageSettings.To_num)
+		if TestEmail() == true {
+			log.Error("Cannot start test")
+			os.Exit(1)
+		}
 		Subscribe()
 	} else {
 		log.Error("File not converted correctly")

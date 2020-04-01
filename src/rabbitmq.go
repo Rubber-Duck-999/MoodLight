@@ -19,7 +19,7 @@ func init() {
 
 	ch, init_err = conn.Channel()
 	failOnError(init_err, "Failed to open a channel")
-	SetState(false)
+	SetState(true)
 }
 
 func failOnError(err error, msg string) {

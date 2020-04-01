@@ -12,21 +12,15 @@ import (
 func Exists(name string) bool {
 	result := false
 	log.Debug("We have been asked to check if this exists: ", name)
-	gopath := os.Getenv("GOPATH")
-	if gopath != "" {
-		fileCheck := gopath + "/" + name
-		log.Debug("We have been asked to check if this exists: ", fileCheck)
-		file, err := os.Stat(fileCheck)
-		if err == nil {
-			if os.IsNotExist(err) {
-				log.Warn("File doesn't exist")
-			} else {
-				isFile := checkType(file)
-				log.Debug(fileCheck)
-				log.Debug("Is it a file: ", *isFile)
-				if *isFile == 2 {
-					result = true
-				}
+	file, err := os.Stat(name)
+	if err == nil {
+		if os.IsNotExist(err) {
+			log.Warn("File doesn't exist: ", file)
+		} else {
+			isFile := checkType(file)
+			log.Debug("Is it a file: ", *isFile)
+			if *isFile == 2 {
+				result = true
 			}
 		}
 	}
@@ -47,21 +41,17 @@ func checkType(fi os.FileInfo) *int {
 }
 
 func GetData(cfg *ConfigTypes, file string) bool {
-	gopath := os.Getenv("GOPATH")
 	validConfig := false
-	if gopath != "" {
-		fileCheck := gopath + "/" + file
-		f, err := os.Open(fileCheck)
+	f, err := os.Open(file)
+	if err != nil {
+		log.Warn("Failed to open file err: ", err)
+	} else {
+		decoder := yaml.NewDecoder(f)
+		err = decoder.Decode(&cfg)
 		if err != nil {
-			log.Warn("Failed to open file err: ", err)
+			log.Warn("Couldn't edit file: ", err, f)
 		} else {
-			decoder := yaml.NewDecoder(f)
-			err = decoder.Decode(&cfg)
-			if err != nil {
-				log.Warn("Couldn't edit file: ", err, f)
-			} else {
-				validConfig = true
-			}
+			validConfig = true
 		}
 	}
 	return validConfig

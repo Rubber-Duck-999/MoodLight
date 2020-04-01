@@ -79,6 +79,7 @@ func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
 	fatal := sendEmail("Test")
+	fatal = SendSMS("Test Message")
 	return fatal
 }
 
@@ -88,12 +89,12 @@ func SendSMS(issue string) bool {
 		log.Debug("Sending important SMS")
 		twilio := gotwilio.NewTwilioClient(_sid, _token)
 
-		message := "Welcome to gotwilio!"
-		_, _, err := twilio.SendSMS(_from_num, _to_num, message, "", "")
-		if err != nil {
-			return state
-		} else {
+		_, exception, err := twilio.SendSMS(_from_num, _to_num, issue, "","")
+		if err != nil || exception != nil{
+			log.Error("Exception found: ", exception)
+			log.Error("SMS Failure: ", err)
 			state = true
+			return state
 		}
 	}
 	return state
@@ -109,10 +110,11 @@ func checkCanSend() bool {
 	if year == _year {
 		if month == _month {
 			if day == _day {
-				if _messages_sent <= 10 {
+				if _messages_sent <= 1 {
 					_messages_sent++
 					return true
 				} else {
+					log.Error("Max messages sent")
 					return false
 				}
 			} else {
@@ -133,6 +135,7 @@ func sendEmail(issue string) bool {
 	// compose the message
 	fatal := false
 	if _state && checkCanSend() {
+		log.Debug("Sending email")
 		_body = issue
 		m := email.NewMessage(_subject, _body)
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
