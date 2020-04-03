@@ -13,5 +13,6 @@
 /bin/*
 /src/pkg/
 /config.yml
+/FH.yml
 /pkg/
 /src/exeFaultHandler
