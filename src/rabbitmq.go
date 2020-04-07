@@ -63,10 +63,9 @@ func Subscribe() {
 	log.Trace("Beginning rabbitmq initialisation")
 	log.Warn("Rabbitmq error:", init_err)
 	if init_err == nil {
-		var topics = [4]string{
+		var topics = [3]string{
 			FAILURE,
 			MOTIONDETECTED,
-			ISSUENOTICE,
 			MONITORSTATE,
 		}
 
@@ -161,14 +160,13 @@ func PublishRequestPower(this_power string, this_severity int, this_component st
 	return failure
 }
 
-func PublishEventFH(component string, message string, time string, severity int) string {
+func PublishEventFH(component string, message string, time string) string {
 	failure := ""
 
 	eventFH, err := json.Marshal(&EventFH{
 		Component:    component,
 		Message:      message,
-		Time:         time,
-		Severity:     severity})
+		Time:         time})
 	if err != nil {
 		failure = "Failed to convert EventFH"
 	} else {

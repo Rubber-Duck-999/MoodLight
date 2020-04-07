@@ -79,7 +79,6 @@ func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
 	fatal := sendEmail("Test")
-	fatal = SendSMS("Test Message")
 	return fatal
 }
 
@@ -110,7 +109,7 @@ func checkCanSend() bool {
 	if year == _year {
 		if month == _month {
 			if day == _day {
-				if _messages_sent <= 1 {
+				if _messages_sent <= 3 {
 					_messages_sent++
 					return true
 				} else {

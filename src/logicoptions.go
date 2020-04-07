@@ -9,7 +9,7 @@ import (
 func messageFailure(issue bool) string {
 	fail := ""
 	if issue {
-		fail = PublishEventFH(COMPONENT, SERVERERROR, getTime(), SERVERSEVERITY)
+		fail = PublishEventFH(COMPONENT, SERVERERROR, getTime())
 	}
 	return fail
 }
@@ -66,27 +66,11 @@ func checkState() {
 					log.Debug("Published Request Power")
 				}
 
-			case SubscribedMessagesMap[message_id].routing_key == ISSUENOTICE:
-				var message IssueNotice
-				err := json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				if err == nil {
-					valid := PublishRequestPower("restart", message.Severity, message.Component)
-					log.Info("We will inform them to shutdown: ", message.Component)
-					if valid != "" {
-						log.Warn("Failed to publish")
-					} else {
-						SubscribedMessagesMap[message_id].valid = false
-						log.Info("Published Request Power")
-					}
-				} else {
-					log.Warn(err)
-				}
-
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
 				SetState(monitor.State)
-				valid := PublishEventFH(COMPONENT, UPDATESTATEERROR, getTime(), STATEUPDATESEVERITY)
+				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime())
 				if valid != "" {
 					log.Warn("Failed to publish")
 				} else {

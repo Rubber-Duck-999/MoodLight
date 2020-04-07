@@ -25,12 +25,6 @@ type MotionDetected struct {
 	Time string
 }
 
-type IssueNotice struct {
-	Severity  int `json:"severity"`
-	Component string `json:"component"`
-	Action    string `json:"action"`
-}
-
 type MonitorState struct {
 	State bool
 }
@@ -56,14 +50,13 @@ type MapMessage struct {
 }
 
 const FAILURE string = "Failure.*"
-const FAILURENETWORK string = "Failure.Network"     //Level 4
+const FAILURENETWORK string = "Failure.Network"     //Level 5
 const FAILUREDATABASE string = "Failure.Database"   //Level 4
-const FAILURECOMPONENT string = "Failure.Component" //Level 2 if NAC 3
-const FAILUREACCESS string = "Failure.Access"       //Level 5
-const FAILURECAMERA string = "Failure.Camera"
-const MOTIONDETECTED string = "Motion.Detected" //Level 5
+const FAILURECOMPONENT string = "Failure.Component" //Level 3
+const FAILUREACCESS string = "Failure.Access"       //Level 6
+const FAILURECAMERA string = "Failure.Camera" // Level 2
+const MOTIONDETECTED string = "Motion.Detected" //Level 7
 
-const ISSUENOTICE string = "Issue.Notice"
 const MONITORSTATE string = "Monitor.State"
 const REQUESTPOWER string = "Request.Power"
 const EVENTFH string = "Event.FH"
@@ -72,7 +65,7 @@ const EXCHANGETYPE string = "topic"
 const TIMEFORMAT string = "20060102150405"
 const CAMERAMONITOR string = "CM"
 const COMPONENT string = "FH"
-const UPDATESTATEERROR string = "We have received a brand new state update"
+const UPDATESTATE string = "Monitoring state changed"
 const SERVERERROR string = "Server is failing to send"
 const STATEUPDATESEVERITY int = 2
 const SERVERSEVERITY int = 4
