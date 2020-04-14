@@ -22,7 +22,8 @@ type FailureMessage struct {
 }
 
 type MotionDetected struct {
-	Time string
+	File string `json:"file"`
+	Time string `json:"time"`
 }
 
 type MonitorState struct {
@@ -67,6 +68,7 @@ const CAMERAMONITOR string = "CM"
 const COMPONENT string = "FH"
 const UPDATESTATE string = "Monitoring state changed"
 const SERVERERROR string = "Server is failing to send"
+const MOTIONMESSAGE string = "There was movement, check the image"
 const STATEUPDATESEVERITY int = 2
 const SERVERSEVERITY int = 4
 const FAILURECONVERT string = "Failed to convert"

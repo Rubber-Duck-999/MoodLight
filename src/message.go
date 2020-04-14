@@ -78,7 +78,7 @@ func SetMessageSettings(sid string, token string, from_num string, to_num string
 func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
-	fatal := sendEmail("Test")
+	fatal := sendEmail("Starting up Server", "Test")
 	return fatal
 }
 
@@ -125,18 +125,23 @@ func checkCanSend() bool {
 	return false
 }
 
-func SendEmailRoutine(issue string) bool {
-	event := sendEmail(issue)
+func SendEmailRoutine(subject string, issue string) bool {
+	event := sendEmail(subject, issue)
 	return event
 }
 
-func sendEmail(issue string) bool {
+func SendAttachedRoutine(issue string, file string) bool {
+	event := sendAttachmentEmail(issue, file)
+	return event
+}
+
+func sendEmail(subject string, issue string) bool {
 	// compose the message
 	fatal := false
 	if _state && checkCanSend() {
 		log.Debug("Sending email")
 		_body = issue
-		m := email.NewMessage(_subject, _body)
+		m := email.NewMessage(subject, _body)
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
 		m.To = []string{_to_email}
 
@@ -145,6 +150,33 @@ func sendEmail(issue string) bool {
 		if err := email.Send("smtp.zoho.eu:587", auth, m); err != nil {
 			log.Warn("Found a issue")
 			log.Warn(err)
+			fatal = true
+		}
+	}
+	return fatal
+}
+
+func sendAttachmentEmail(issue string, file string) bool {
+	// compose the message
+	fatal := false
+	if _state && checkCanSend() {
+		log.Debug("Sending email")
+		_body = issue
+		_subject = "Movement in Flat"
+		m := email.NewMessage(_subject, _body)
+		m.From = mail.Address{Name: _from_name, Address: _from_email}
+		m.To = []string{_to_email}
+
+		//Attechments
+		if err := m.Attach(file); err != nil {
+			log.Fatal(err)
+		}
+
+		// send it
+		auth := smtp.PlainAuth("", _email, _password, "smtp.zoho.eu")
+		if emailErr := email.Send("smtp.zoho.eu:587", auth, m); emailErr != nil {
+			log.Warn("Found a issue")
+			log.Warn(emailErr)
 			fatal = true
 		}
 	}

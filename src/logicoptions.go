@@ -38,21 +38,36 @@ func checkState() {
 			log.Debug("Message id is: ", message_id)
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
+			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
+				var message MotionDetected
+				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
+				if message.File != "N/A" {
+					messageFailure(SendEmailRoutine("We have movement in the flat", MOTIONMESSAGE))
+				} else {
+					messageFailure(SendAttachedRoutine(MOTIONMESSAGE, message.File))
+				}
+				//messageFailure(SendSMS(MOTIONMESSAGE))
+				SubscribedMessagesMap[message_id].valid = false
+
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
 				log.Debug("Received a network failure message")
-				messageFailure(SendEmailRoutine("Serious Network failure"))
+				messageFailure(SendEmailRoutine("Server unable to respond", "The network is not responding or the\n " +
+												"firewall has shut down then network"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
-				messageFailure(SendEmailRoutine("Serious Database failure"))
+				messageFailure(SendEmailRoutine("Data failure", "Serious Database failure"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECOMPONENT:
-				messageFailure(SendEmailRoutine("Serious Component failure"))
+				var message FailureMessage
+				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
+				log.Warn("Failure in component: ",message.Failure_type)
+				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, please troubleshoot"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
-				messageFailure(SendEmailRoutine("Serious Access Violation"))
+				messageFailure(SendEmailRoutine("Multiple pin attempts", "Please check the alarm immediately"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECAMERA:
@@ -77,11 +92,6 @@ func checkState() {
 					log.Debug("Published Event Fault Handler")
 					SubscribedMessagesMap[message_id].valid = false
 				}
-
-			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
-				messageFailure(SendEmailRoutine("Motion Detected"))
-				messageFailure(SendSMS("Motion Detected"))
-				SubscribedMessagesMap[message_id].valid = false
 
 			default:
 				log.Warn("We were not expecting this message unvalidating: ",
