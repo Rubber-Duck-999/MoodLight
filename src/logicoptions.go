@@ -41,7 +41,7 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
 				var message MotionDetected
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				if message.File != "N/A" {
+				if message.File == "N/A" {
 					messageFailure(SendEmailRoutine("We have movement in the flat", MOTIONMESSAGE))
 				} else {
 					messageFailure(SendAttachedRoutine(MOTIONMESSAGE, message.File))
@@ -62,7 +62,7 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECOMPONENT:
 				var message FailureMessage
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				log.Warn("Failure in component: ",message.Failure_type)
+				log.Warn("Failure in component: ", message.Failure_type)
 				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, please troubleshoot"))
 				SubscribedMessagesMap[message_id].valid = false
 
@@ -73,7 +73,7 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECAMERA:
 				var message FailureMessage
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				valid := PublishRequestPower("restart", message.Severity, CAMERAMONITOR)
+				valid := PublishRequestPower("restart", 5, CAMERAMONITOR)
 				if valid != "" {
 					SubscribedMessagesMap[message_id].valid = false
 					log.Warn("Failed to publish")

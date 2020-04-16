@@ -109,7 +109,7 @@ func checkCanSend() bool {
 	if year == _year {
 		if month == _month {
 			if day == _day {
-				if _messages_sent <= 3 {
+				if _messages_sent <= 30 {
 					_messages_sent++
 					return true
 				} else {
@@ -167,10 +167,13 @@ func sendAttachmentEmail(issue string, file string) bool {
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
 		m.To = []string{_to_email}
 
-		//Attechments
-		if err := m.Attach(file); err != nil {
-			log.Fatal(err)
+		//Attachments
+		if Exists(file) {
+			if err := m.Attach(file); err != nil {
+				log.Fatal(err)
+			}
 		}
+
 
 		// send it
 		auth := smtp.PlainAuth("", _email, _password, "smtp.zoho.eu")

@@ -17,8 +17,7 @@ type ConfigTypes struct {
 
 type FailureMessage struct {
 	Time         string `json:"time"`
-	Failure_type string `json:"type"`
-	Severity     int    `json:"severity"`
+	Failure_type string `json:"type_of_failure"`
 }
 
 type MotionDetected struct {
@@ -63,7 +62,7 @@ const REQUESTPOWER string = "Request.Power"
 const EVENTFH string = "Event.FH"
 const EXCHANGENAME string = "topics"
 const EXCHANGETYPE string = "topic"
-const TIMEFORMAT string = "20060102150405"
+const TIMEFORMAT string = "2006/01/02 15:04:05"
 const CAMERAMONITOR string = "CM"
 const COMPONENT string = "FH"
 const UPDATESTATE string = "Monitoring state changed"
