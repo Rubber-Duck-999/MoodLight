@@ -12,6 +12,7 @@ type ConfigTypes struct {
 		Token    string `yaml:"token"`
 		From_num string `yaml:"from_num"`
 		To_num   string `yaml:"to_num"`
+		Password string `yaml:"passcode"`
 	} `yaml:"message_settings"`
 }
 

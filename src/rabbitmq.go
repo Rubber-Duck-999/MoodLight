@@ -11,15 +11,14 @@ import (
 var conn *amqp.Connection
 var ch *amqp.Channel
 var init_err error
+var password string
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
-	conn, init_err = amqp.Dial("amqp://guest:password@localhost:5672/")
-	failOnError(init_err, "Failed to connect to RabbitMQ")
+}
 
-	ch, init_err = conn.Channel()
-	failOnError(init_err, "Failed to open a channel")
-	SetState(true)
+func SetPassword(pass string) {
+	password = pass
 }
 
 func failOnError(err error, msg string) {
@@ -60,6 +59,12 @@ func messages(routing_key string, value string) {
 }
 
 func Subscribe() {
+	conn, init_err = amqp.Dial("amqp://guest:" + password + "@localhost:5672/")
+	failOnError(init_err, "Failed to connect to RabbitMQ")
+
+	ch, init_err = conn.Channel()
+	failOnError(init_err, "Failed to open a channel")
+	SetState(true)
 	log.Trace("Beginning rabbitmq initialisation")
 	log.Warn("Rabbitmq error:", init_err)
 	if init_err == nil {
