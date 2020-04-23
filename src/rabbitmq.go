@@ -15,6 +15,7 @@ var password string
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
+	SetState(true)
 }
 
 func SetPassword(pass string) {
@@ -64,7 +65,6 @@ func Subscribe() {
 
 	ch, init_err = conn.Channel()
 	failOnError(init_err, "Failed to open a channel")
-	SetState(true)
 	log.Trace("Beginning rabbitmq initialisation")
 	log.Warn("Rabbitmq error:", init_err)
 	if init_err == nil {
