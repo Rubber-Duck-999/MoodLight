@@ -63,8 +63,8 @@ func checkState() {
 				var message FailureMessage
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
 				log.Warn("Failure in component: ", message.Failure_type)
-				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, please troubleshoot " + 
-					message.Failure_type))
+				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, \n" +
+					"please troubleshoot "  + message.Failure_type))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
