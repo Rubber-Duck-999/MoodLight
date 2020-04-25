@@ -56,7 +56,7 @@ func checkState() {
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
-				messageFailure(SendEmailRoutine("Data failure", "Serious Database failure"))
+				messageFailure(SendEmailRoutine("Data failure HouseGuard", "Serious Database failure"))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECOMPONENT:
@@ -85,6 +85,8 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
+				messageFailure(SendEmailRoutine("Alarm has changed state", "Please check the alarm immediately \n" +
+					"If this was not you"))
 				SetState(monitor.State)
 				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime())
 				if valid != "" {
