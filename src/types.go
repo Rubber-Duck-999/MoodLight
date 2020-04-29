@@ -40,7 +40,6 @@ type EventFH struct {
 	Component    string
 	Message      string
 	Time         string
-	Severity     int
 }
 
 type MapMessage struct {
@@ -66,9 +65,15 @@ const EXCHANGETYPE string = "topic"
 const TIMEFORMAT string = "2006/01/02 15:04:05"
 const CAMERAMONITOR string = "CM"
 const COMPONENT string = "FH"
-const UPDATESTATE string = "Monitoring state changed"
+//
+const UPDATESTATE_TITLE string = "Monitoring state changed"
+const UPDATESTATE_MESSAGE string = "The alarm state has been changed \n" +
+									"Please ensure that whoever enacted this authorised"
+//
+const UPDATESTATE string = "Motion state changed"
 const SERVERERROR string = "Server is failing to send"
-const MOTIONMESSAGE string = "There was movement, check the image"
+const MOTIONMESSAGE string = "There was movement, check the image on the drive"
+//
 const STATEUPDATESEVERITY int = 2
 const SERVERSEVERITY int = 4
 const FAILURECONVERT string = "Failed to convert"

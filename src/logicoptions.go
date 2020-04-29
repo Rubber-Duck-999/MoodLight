@@ -41,12 +41,7 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
 				var message MotionDetected
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				if message.File == "N/A" {
-					messageFailure(SendEmailRoutine("We have movement in the flat", MOTIONMESSAGE))
-				} else {
-					messageFailure(SendAttachedRoutine(MOTIONMESSAGE, message.File))
-				}
-				//messageFailure(SendSMS(MOTIONMESSAGE))
+				messageFailure(SendEmailRoutine("We have movement in the flat", MOTIONMESSAGE))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
@@ -85,8 +80,7 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
-				messageFailure(SendEmailRoutine("Alarm has changed state", "Please check the alarm immediately \n" +
-					"If this was not you"))
+				messageFailure(SendEmailRoutine(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE))
 				SetState(monitor.State)
 				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime())
 				if valid != "" {

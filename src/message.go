@@ -152,6 +152,8 @@ func sendEmail(subject string, issue string) bool {
 			log.Warn(err)
 			fatal = true
 		}
+	} else {
+		log.Warn("We cannot send an email currently as state: ", _state)
 	}
 	return fatal
 }
