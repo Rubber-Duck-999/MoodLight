@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/scorredoira/email"
-	"github.com/sfreiberg/gotwilio"
 	log "github.com/sirupsen/logrus"
 	"net/mail"
 	"net/smtp"
@@ -18,10 +17,6 @@ var _body string
 var _from_email string
 var _from_name string
 var _to_email string
-var _sid string
-var _token string
-var _from_num string
-var _to_num string
 var _year int 
 var _month time.Month
 var _day int
@@ -37,10 +32,7 @@ func init() {
 	_from_email = ""
 	_from_name = ""
 	_to_email = ""
-	_token = ""
-	_sid = ""
-	_from_num = ""
-	_to_num = ""
+	setDate()
 }
 
 func SetState(state bool) {
@@ -67,36 +59,11 @@ func SetSettings(email string, password string, from_email string,
 	_to_email = to_email
 }
 
-func SetMessageSettings(sid string, token string, from_num string, to_num string) {
-	_sid = sid
-	_token = token
-	_from_num = from_num
-	_to_num = to_num
-	setDate()
-}
-
 func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
 	fatal := sendEmail("Starting up Server", "Test")
 	return fatal
-}
-
-func SendSMS(issue string) bool {
-	state := false
-	if _state && checkCanSend() {
-		log.Debug("Sending important SMS")
-		twilio := gotwilio.NewTwilioClient(_sid, _token)
-
-		_, exception, err := twilio.SendSMS(_from_num, _to_num, issue, "","")
-		if err != nil || exception != nil{
-			log.Error("Exception found: ", exception)
-			log.Error("SMS Failure: ", err)
-			state = true
-			return state
-		}
-	}
-	return state
 }
 
 func setDate() {
@@ -173,6 +140,7 @@ func sendAttachmentEmail(issue string, file string) bool {
 		if Exists(file) {
 			if err := m.Attach(file); err != nil {
 				log.Fatal(err)
+				fatal = true
 			}
 		}
 

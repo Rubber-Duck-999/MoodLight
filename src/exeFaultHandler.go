@@ -36,10 +36,6 @@ func main() {
 			data.EmailSettings.Password,
 			data.EmailSettings.Name,
 			data.EmailSettings.To_email)
-		SetMessageSettingsLogic(data.MessageSettings.Sid,
-			data.MessageSettings.Token,
-			data.MessageSettings.From_num,
-			data.MessageSettings.To_num)
 		SetPassword(data.MessageSettings.Password)
 		if TestEmail() == true {
 			log.Error("Cannot start test")

@@ -23,13 +23,9 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 	if setup_invalid {
 		shutdown_valid = true
 		messageFailure(shutdown_valid)
-		log.Fatal("We have major flaw - shutting down node and diagonose")
+		log.Error("We have major flaw")
 	}
 	return shutdown_valid
-}
-
-func SetMessageSettingsLogic(sid string, token string, from_num string, to_num string) {
-	SetMessageSettings(sid, token, from_num, to_num)
 }
 
 func checkState() {
@@ -71,10 +67,10 @@ func checkState() {
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
 				valid := PublishRequestPower("restart", 5, CAMERAMONITOR)
 				if valid != "" {
-					SubscribedMessagesMap[message_id].valid = false
 					log.Warn("Failed to publish")
 				} else {
 					log.Debug("Published Request Power")
+					SubscribedMessagesMap[message_id].valid = false
 				}
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:

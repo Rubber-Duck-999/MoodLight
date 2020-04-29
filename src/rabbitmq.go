@@ -59,15 +59,20 @@ func messages(routing_key string, value string) {
 	}
 }
 
-func Subscribe() {
+func SetConnection() error{
 	conn, init_err = amqp.Dial("amqp://guest:" + password + "@localhost:5672/")
 	failOnError(init_err, "Failed to connect to RabbitMQ")
 
 	ch, init_err = conn.Channel()
 	failOnError(init_err, "Failed to open a channel")
+	return init_err
+}
+
+func Subscribe() {
+	init := SetConnection()
 	log.Trace("Beginning rabbitmq initialisation")
-	log.Warn("Rabbitmq error:", init_err)
-	if init_err == nil {
+	log.Warn("Rabbitmq error:", init)
+	if init == nil {
 		var topics = [3]string{
 			FAILURE,
 			MOTIONDETECTED,

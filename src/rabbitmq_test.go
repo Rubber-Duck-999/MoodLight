@@ -10,8 +10,25 @@ import (
 // Check that State is set
 // then run this test will prove it is set
 func TestPublishFailRabbit(t *testing.T) {
-	failure := "cheese"
-	failure = messageFailure(true)
+	file := "../FH.yml"
+	var data ConfigTypes
+	if Exists(file) {
+		GetData(&data, file)
+	} else {
+		t.Error("File doesn't exist")
+	}
+	if data.EmailSettings.Email != "" {
+		SetEmailSettings(data.EmailSettings.Email,
+			data.EmailSettings.Password,
+			data.EmailSettings.Name,
+			data.EmailSettings.To_email)
+		SetPassword(data.MessageSettings.Password)
+	}
+	init := SetConnection()
+	if init != nil {
+		t.Error("Failure")
+	}
+	failure := messageFailure(true)
 	if failure != "" {
 		if strings.Contains(FAILUREPUBLISH, failure) {
 			t.Error("Failure")
@@ -77,19 +94,19 @@ func TestGetTime(t *testing.T) {
 
 func TestGetTimeFail(t *testing.T) {
 	time := getTime()
-	if strings.Contains(time, ":") {
+	if strings.Contains(time, "-") {
 		t.Error("Failure")
 	}
 }
 
 func TestEventFH(t *testing.T) {
-	valid := PublishEventFH(COMPONENT, UPDATESTATEERROR, getTime(), STATEUPDATESEVERITY)
+	valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime())
 	if valid != "" {
 		t.Error("Failure")
 	}
 }
 
-func TestEmailSettings(t *testing.T) {
+func TestEmailSettingsFail(t *testing.T) {
 	shutdown_valid := SetEmailSettings("email_to", "password", "from_name", "to_email")
 	if shutdown_valid {
 		t.Error("Failure")
@@ -99,7 +116,8 @@ func TestEmailSettings(t *testing.T) {
 func TestIssueNotice(t *testing.T) {
 	value := "{ 'severity': 1, 'component': 'CM', 'action': null }"
 	messages("Issue.Notice", value)
-	if SubscribedMessagesMap[4].valid == false {
+	checkState()
+	if SubscribedMessagesMap[4].valid != false {
 		t.Error("Failure")
 	} else if SubscribedMessagesMap[4].routing_key == EVENTFH {
 		t.Log(SubscribedMessagesMap[4].routing_key)
@@ -107,3 +125,41 @@ func TestIssueNotice(t *testing.T) {
 	}
 }
 
+func TestRequestPower(t *testing.T) {
+	value := "{ 'time': '14:00:20', 'failure_type': 'Power loss' }"
+	messages(FAILURECAMERA, value)
+	checkState()
+	if SubscribedMessagesMap[5].valid != false {
+		t.Log(SubscribedMessagesMap[5].routing_key)
+		t.Error("Failure")
+	} else if SubscribedMessagesMap[5].routing_key != FAILURECAMERA {
+		t.Log(SubscribedMessagesMap[5].routing_key)
+		t.Error("Failure")
+	}
+}
+
+func TestAllFailures(t *testing.T) {
+	value := "{ 'time': '14:00:20', 'failure_type': 'Power loss' }"
+	messages(FAILURENETWORK, value)
+	messages(FAILUREDATABASE, value)
+	messages(FAILURECOMPONENT, value)
+	messages(FAILUREACCESS, value)
+	value = "{ 'state': true }"
+	messages(MONITORSTATE, value)
+	checkState()
+	if SubscribedMessagesMap[9].valid != false {
+		t.Log(SubscribedMessagesMap[5].routing_key)
+		t.Error("Failure")
+	} else if SubscribedMessagesMap[9].routing_key == FAILURECAMERA {
+		t.Log(SubscribedMessagesMap[9].routing_key)
+		t.Error("Failure")
+	}
+}
+
+func TestEmailSettings(t *testing.T) {
+	SetState(true)
+	failure := SetEmailSettings("", "", "", "") 
+	if failure == false {
+		t.Error("Failure")
+	}
+}

@@ -9,7 +9,7 @@ import (
 // We can check the file exist
 // then run this test will prove it checks correctly exists
 func TestExistFile(t *testing.T) {
-	var this_file string = `config.yml-sample`
+	var this_file string = `../config.yml-sample`
 	if Exists(this_file) != true {
 		t.Error("Failure TestExistFile")
 	}
@@ -34,7 +34,7 @@ func TestFolderInvalid(t *testing.T) {
 }
 
 func TestConfigGetNull(t *testing.T) {
-	var file string = `config.yml-sample`
+	var file string = `../config.yml-sample`
 	var data ConfigTypes
 	GetData(&data, file)
 	if data.EmailSettings.Email == "" {
@@ -52,7 +52,7 @@ func TestConfigGetNull(t *testing.T) {
 }
 
 func TestConfigGetAll(t *testing.T) {
-	var file string = `config.yml-sample`
+	var file string = `../config.yml-sample`
 	var data ConfigTypes
 	if GetData(&data, file) == false {
 		t.Error("Failure")
