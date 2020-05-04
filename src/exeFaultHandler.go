@@ -32,13 +32,14 @@ func main() {
 	}
 	log.Trace(data.EmailSettings.Email)
 	if data.EmailSettings.Email != "" {
-		SetEmailSettings(data.EmailSettings.Email,
+		valid := SetEmailSettings(data.EmailSettings.Email,
 			data.EmailSettings.Password,
 			data.EmailSettings.Name,
 			data.EmailSettings.To_email)
 		SetPassword(data.MessageSettings.Password)
-		if TestEmail() == true {
-			log.Error("Cannot start test")
+		if valid {
+			_state = false
+		} else {
 			os.Exit(1)
 		}
 		Subscribe()

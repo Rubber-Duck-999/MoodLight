@@ -76,6 +76,7 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
+				SetState(true)
 				messageFailure(SendEmailRoutine(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE))
 				SetState(monitor.State)
 				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime())
