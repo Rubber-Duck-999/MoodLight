@@ -9,5 +9,5 @@ require (
 	github.com/sfreiberg/gotwilio v0.0.0-20200219192335-4472db517000
 	github.com/sirupsen/logrus v1.6.0
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 )
