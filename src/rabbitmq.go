@@ -73,10 +73,11 @@ func Subscribe() {
 	log.Trace("Beginning rabbitmq initialisation")
 	log.Warn("Rabbitmq error:", init)
 	if init == nil {
-		var topics = [3]string{
+		var topics = [4]string{
 			FAILURE,
 			MOTIONDETECTED,
 			MONITORSTATE,
+			DEVICEFOUND,
 		}
 
 		err := ch.ExchangeDeclare(

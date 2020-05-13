@@ -87,6 +87,18 @@ func checkState() {
 					SubscribedMessagesMap[message_id].valid = false
 				}
 
+			case SubscribedMessagesMap[message_id].routing_key == DEVICEFOUND:
+				var device DeviceFound
+				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &device)
+				if device.Status == BLOCKED {
+					messageFailure(SendEmailRoutine(DEVICE_TITLE, 
+					DEVICEBLOCKED_MESSAGE + device.Device_name))
+				} else if device.Status == UNKNOWN {
+					messageFailure(SendEmailRoutine(DEVICE_TITLE, 
+						DEVICEUNKNOWN_MESSAGE + device.Device_name))
+				}
+				SubscribedMessagesMap[message_id].valid = false				
+
 			default:
 				log.Warn("We were not expecting this message unvalidating: ",
 					SubscribedMessagesMap[message_id].routing_key)

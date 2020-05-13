@@ -45,6 +45,12 @@ type MapMessage struct {
 	valid       bool
 }
 
+type DeviceFound struct {
+	Device_name string `json:"name"`
+	Ip_address string `json:"address"`
+	Status int `json:"status"`
+}
+
 const FAILURE string = "Failure.*"
 const FAILURENETWORK string = "Failure.Network"     //Level 5
 const FAILUREDATABASE string = "Failure.Database"   //Level 4
@@ -53,6 +59,7 @@ const FAILUREACCESS string = "Failure.Access"       //Level 6
 const FAILURECAMERA string = "Failure.Camera" // Level 2
 const MOTIONDETECTED string = "Motion.Detected" //Level 7
 
+const DEVICEFOUND string = "Device.Found"
 const MONITORSTATE string = "Monitor.State"
 const REQUESTPOWER string = "Request.Power"
 const EVENTFH string = "Event.FH"
@@ -61,6 +68,12 @@ const EXCHANGETYPE string = "topic"
 const TIMEFORMAT string = "2006/01/02 15:04:05"
 const CAMERAMONITOR string = "CM"
 const COMPONENT string = "FH"
+//
+const DEVICE_TITLE string = "NETWORK ERROR"
+const DEVICEBLOCKED_MESSAGE string = "A blocked dveice has joined the\n" +
+									 "network. Device name: "
+const DEVICEUNKNOWN_MESSAGE string = "A unknown device has joined the\n" +
+									 "network. Device name: "
 //
 const UPDATESTATE_TITLE string = "Monitoring state changed"
 const UPDATESTATE_MESSAGE string = "The alarm state has been changed \n" +
@@ -72,6 +85,8 @@ const MOTIONMESSAGE string = "There was movement, check the image on the drive"
 //
 const STATEUPDATESEVERITY int = 2
 const SERVERSEVERITY int = 4
+const BLOCKED int = 2
+const UNKNOWN int = 4
 const FAILURECONVERT string = "Failed to convert"
 const FAILUREPUBLISH string = "Failed to publish"
 
