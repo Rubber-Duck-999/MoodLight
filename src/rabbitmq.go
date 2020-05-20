@@ -192,7 +192,7 @@ func StatusCheck() {
 		now := time.Now()
 		m := now.Minute()
 		s := now.Second()
-		if m % 15 == 0 && done {
+		if m % 15 == 0 && !done {
 			if s >= 0 && s<= 5 {
 				status.CommonFaults = GetCommonFault()
 				valid := PublishStatusFH()
@@ -203,6 +203,8 @@ func StatusCheck() {
 				}
 				done = true
 			}
+		} else {
+			done = false
 		}
 	}
 }
