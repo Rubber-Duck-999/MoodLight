@@ -33,9 +33,9 @@ type RequestPower struct {
 }
 
 type EventFH struct {
-	Component    string
-	Message      string
-	Time         string
+	Component    string `json:"component"`
+	Message      string `json:"message"`
+	Time         string `json:"time"`
 }
 
 type MapMessage struct {
@@ -51,6 +51,16 @@ type DeviceFound struct {
 	Status int `json:"status"`
 }
 
+type StatusFH struct {
+	DailyFaults int `json:"daily_faults"`
+	CommonFaults string `json:"common_faults"`
+}
+
+type Fault struct {
+    Count int
+    Name  string
+}
+
 const FAILURE string = "Failure.*"
 const FAILURENETWORK string = "Failure.Network"     //Level 5
 const FAILUREDATABASE string = "Failure.Database"   //Level 4
@@ -63,6 +73,7 @@ const DEVICEFOUND string = "Device.Found"
 const MONITORSTATE string = "Monitor.State"
 const REQUESTPOWER string = "Request.Power"
 const EVENTFH string = "Event.FH"
+const STATUSFH string = "Status.FH"
 const EXCHANGENAME string = "topics"
 const EXCHANGETYPE string = "topic"
 const TIMEFORMAT string = "2006/01/02 15:04:05"

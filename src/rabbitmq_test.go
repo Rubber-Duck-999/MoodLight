@@ -163,3 +163,20 @@ func TestEmailSettings(t *testing.T) {
 		t.Error("Failure")
 	}
 }
+
+func TestGetCommonFault(t *testing.T) {
+	network.Count = 3
+	expected := GetCommonFault()
+	if expected != "Network Fault" {
+		t.Error("Failure - ", expected)
+	}
+}
+
+func TestGetCommonFaultMultiple(t *testing.T) {
+	network.Count = 3
+	software.Count = 3
+	expected := GetCommonFault()
+	if expected != "Software Fault" {
+		t.Error("Failure - ", expected)
+	}	
+}

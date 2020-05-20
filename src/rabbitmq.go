@@ -12,10 +12,50 @@ var conn *amqp.Connection
 var ch *amqp.Channel
 var init_err error
 var password string
+var status StatusFH
+var network Fault
+var database Fault
+var software Fault
+var access Fault
+var camera Fault
+var day int
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
 	SetState(true)
+
+	status = StatusFH{
+		DailyFaults: 0,
+		CommonFaults: "N/A"}
+
+	_, _, day := time.Now().Date()
+	log.Debug("Current day is set to: ", day)
+
+	network = Fault{
+        Count: 0,
+        Name:  "Network Fault",
+	}
+	
+	database = Fault{
+        Count: 0,
+        Name:  "Database Fault",
+	}
+	
+	software = Fault{
+        Count: 0,
+        Name:  "Software Fault",
+	}
+	
+	access = Fault{
+        Count: 0,
+        Name:  "Alarm Access Fault",
+	}
+	
+	camera = Fault{
+        Count: 0,
+        Name:  "Camera Fault",
+    }
+
 }
 
 func SetPassword(pass string) {
@@ -139,9 +179,56 @@ func Subscribe() {
 			//through an event message
 		}()
 
+		go StatusCheck()
+
 		log.Trace(" [*] Waiting for logs. To exit press CTRL+C")
 		<-forever
 	}
+}
+
+func StatusCheck() {
+	done := false
+	for {
+		now := time.Now()
+		m := now.Minute()
+		s := now.Second()
+		if m % 15 == 0 && done {
+			if s >= 0 && s<= 5 {
+				status.CommonFaults = GetCommonFault()
+				valid := PublishStatusFH()
+				if valid != "" {
+					log.Warn("Failed to publish")
+				} else {
+					log.Debug("Published Status FH")
+				}
+				done = true
+			}
+		}
+	}
+}
+
+func PublishStatusFH() string {
+	failure := ""
+	message, err := json.Marshal(&status)
+	failOnError(err, "Failed to convert StatusFH")
+	log.Debug(string(message))
+
+	if err == nil {
+		err = ch.Publish(
+			EXCHANGENAME, // exchange
+			STATUSFH, // routing key
+			false,        // mandatory
+			false,        // immediate
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        []byte(message),
+			})
+		if err != nil {
+			failOnError(err, "Failed to publish Status FH topic")
+			failure = FAILUREPUBLISH
+		}
+	}
+	return failure
 }
 
 func PublishRequestPower(this_power string, this_severity int, this_component string) string {

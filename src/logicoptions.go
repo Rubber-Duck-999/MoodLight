@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -12,6 +13,17 @@ func messageFailure(issue bool) string {
 		fail = PublishEventFH(COMPONENT, SERVERERROR, getTime())
 	}
 	return fail
+}
+
+func checkDay(daily int) int {
+	_, _, current_day := time.Now().Date()
+	if current_day == day {
+		daily++
+		return daily
+	} else {
+		_, _, day = time.Now().Date()
+		return 0
+	}
 }
 
 func SetEmailSettings(email string, password string, from_name string, to_email string) bool {
@@ -26,6 +38,22 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 		log.Error("We have major flaw")
 	}
 	return shutdown_valid
+}
+
+func GetCommonFault() string {
+	max := 0
+	fault_string := "None"
+	faults := []Fault{network, database, software,
+								access, camera}
+	for _, local := range faults {
+		if local.Count >= max {
+			max = local.Count
+			fault_string = local.Name
+		}
+	}
+	log.Debug("Common Fault found: ", fault_string +
+		" with ", max, " faults")
+	return fault_string
 }
 
 func checkState() {
@@ -44,10 +72,15 @@ func checkState() {
 				log.Debug("Received a network failure message")
 				messageFailure(SendEmailRoutine("Server unable to respond", "The network is not responding or the\n " +
 												"firewall has shut down then network"))
+				status.DailyFaults = checkDay(status.DailyFaults)
+				network.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
+				log.Debug("Received a database failure message")
 				messageFailure(SendEmailRoutine("Data failure HouseGuard", "Serious Database failure"))
+				status.DailyFaults = checkDay(status.DailyFaults)
+				database.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECOMPONENT:
@@ -56,10 +89,14 @@ func checkState() {
 				log.Warn("Failure in component: ", message.Failure_type)
 				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, \n" +
 					"please troubleshoot "  + message.Failure_type))
+				status.DailyFaults = checkDay(status.DailyFaults)
+				software.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
 				messageFailure(SendEmailRoutine("Multiple pin attempts", "Please check the alarm immediately"))
+				status.DailyFaults = checkDay(status.DailyFaults)
+				access.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECAMERA:
@@ -72,6 +109,8 @@ func checkState() {
 					log.Debug("Published Request Power")
 					SubscribedMessagesMap[message_id].valid = false
 				}
+				camera.Count++
+				status.DailyFaults = checkDay(status.DailyFaults)
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
