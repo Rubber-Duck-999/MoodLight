@@ -32,15 +32,15 @@ func main() {
 	}
 	log.Trace(data.EmailSettings.Email)
 	if data.EmailSettings.Email != "" {
-		valid := SetEmailSettings(data.EmailSettings.Email,
+		not_valid := SetEmailSettings(data.EmailSettings.Email,
 			data.EmailSettings.Password,
 			data.EmailSettings.Name,
 			data.EmailSettings.To_email)
 		SetPassword(data.MessageSettings.Password)
-		if valid {
-			_state = false
-		} else {
+		if not_valid {
 			os.Exit(1)
+		} else {
+			_state = false
 		}
 		Subscribe()
 	} else {

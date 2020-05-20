@@ -88,7 +88,8 @@ const DEVICEUNKNOWN_MESSAGE string = "A unknown device has joined the\n" +
 //
 const UPDATESTATE_TITLE string = "Monitoring state changed"
 const UPDATESTATE_MESSAGE string = "The alarm state has been changed \n" +
-									"Please ensure that whoever enacted this authorised"
+									"Please ensure that whoever enacted this " +
+									"was authorised to do so"
 //
 const UPDATESTATE string = "Motion state changed"
 const SERVERERROR string = "Server is failing to send"

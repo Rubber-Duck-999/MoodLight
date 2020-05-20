@@ -46,7 +46,7 @@ func GetCommonFault() string {
 	faults := []Fault{network, database, software,
 								access, camera}
 	for _, local := range faults {
-		if local.Count >= max {
+		if local.Count > max {
 			max = local.Count
 			fault_string = local.Name
 		}

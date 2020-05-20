@@ -191,19 +191,17 @@ func StatusCheck() {
 	for {
 		now := time.Now()
 		m := now.Minute()
-		s := now.Second()
-		if m % 15 == 0 && !done {
-			if s >= 0 && s<= 5 {
-				status.CommonFaults = GetCommonFault()
-				valid := PublishStatusFH()
-				if valid != "" {
-					log.Warn("Failed to publish")
-				} else {
-					log.Debug("Published Status FH")
-				}
-				done = true
+		if m % 7 == 0 && !done {
+			status.CommonFaults = GetCommonFault()
+			valid := PublishStatusFH()
+			if valid != "" {
+				log.Warn("Failed to publish")
+			} else {
+				log.Debug("Published Status FH")
 			}
-		} else {
+			done = true
+		} 
+		if m % 7 != 0 {
 			done = false
 		}
 	}
