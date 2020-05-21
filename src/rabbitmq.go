@@ -192,7 +192,7 @@ func StatusCheck() {
 		now := time.Now()
 		m := now.Minute()
 		if m % 7 == 0 && !done {
-			status.CommonFaults = GetCommonFault()
+			status.CommonFaults, status.DailyFaults = GetCommonFault()
 			valid := PublishStatusFH()
 			if valid != "" {
 				log.Warn("Failed to publish")

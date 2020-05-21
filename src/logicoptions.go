@@ -40,7 +40,7 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 	return shutdown_valid
 }
 
-func GetCommonFault() string {
+func GetCommonFault() (string, int) {
 	max := 0
 	fault_string := "None"
 	faults := []Fault{network, database, software,
@@ -53,7 +53,7 @@ func GetCommonFault() string {
 	}
 	log.Debug("Common Fault found: ", fault_string +
 		" with ", max, " faults")
-	return fault_string
+	return fault_string, max
 }
 
 func checkState() {
