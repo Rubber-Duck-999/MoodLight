@@ -179,31 +179,18 @@ func Subscribe() {
 			//through an event message
 		}()
 
-		go StatusCheck()
-
 		log.Trace(" [*] Waiting for logs. To exit press CTRL+C")
 		<-forever
 	}
 }
 
 func StatusCheck() {
-	done := false
-	for {
-		now := time.Now()
-		m := now.Minute()
-		if m % 7 == 0 && !done {
-			status.CommonFaults, status.DailyFaults = GetCommonFault()
-			valid := PublishStatusFH()
-			if valid != "" {
-				log.Warn("Failed to publish")
-			} else {
-				log.Debug("Published Status FH")
-			}
-			done = true
-		} 
-		if m % 7 != 0 {
-			done = false
-		}
+	status.CommonFaults, status.DailyFaults = GetCommonFault()
+	valid := PublishStatusFH()
+	if valid != "" {
+		log.Warn("Failed to publish")
+	} else {
+		log.Debug("Published Status FH")
 	}
 }
 

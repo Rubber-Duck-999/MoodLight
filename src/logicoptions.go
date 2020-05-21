@@ -143,6 +143,7 @@ func checkState() {
 					SubscribedMessagesMap[message_id].routing_key)
 				SubscribedMessagesMap[message_id].valid = false
 			}
+			StatusCheck()
 		}
 	}
 
