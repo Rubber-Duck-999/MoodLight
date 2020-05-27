@@ -39,8 +39,6 @@ func main() {
 		SetPassword(data.MessageSettings.Password)
 		if not_valid {
 			os.Exit(1)
-		} else {
-			_state = false
 		}
 		Subscribe()
 	} else {
