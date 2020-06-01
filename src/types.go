@@ -36,6 +36,7 @@ type EventFH struct {
 	Component    string `json:"component"`
 	Message      string `json:"message"`
 	Time         string `json:"time"`
+	EventTypeId  string `json:"event_type_id"`
 }
 
 type MapMessage struct {

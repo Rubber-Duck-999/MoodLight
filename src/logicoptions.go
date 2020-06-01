@@ -10,7 +10,7 @@ import (
 func messageFailure(issue bool) string {
 	fail := ""
 	if issue {
-		fail = PublishEventFH(COMPONENT, SERVERERROR, getTime())
+		fail = PublishEventFH(COMPONENT, SERVERERROR, getTime(), "FH1")
 	}
 	return fail
 }
@@ -118,7 +118,7 @@ func checkState() {
 				SetState(true)
 				messageFailure(SendEmailRoutine(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE))
 				SetState(monitor.State)
-				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime())
+				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
 				if valid != "" {
 					log.Warn("Failed to publish")
 				} else {

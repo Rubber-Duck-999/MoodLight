@@ -44,7 +44,7 @@ count = 0
 queue_empty = False
 
 def callback(ch, method, properties, body):
-    print(" Received %r:%r" % (method.routing_key, body))
+    print("Received %r:%r" % (method.routing_key, body))
     print("Count is : ", count)
     time.sleep(0.3)
 

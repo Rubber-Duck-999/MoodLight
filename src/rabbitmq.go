@@ -245,13 +245,14 @@ func PublishRequestPower(this_power string, this_severity int, this_component st
 	return failure
 }
 
-func PublishEventFH(component string, message string, time string) string {
+func PublishEventFH(component string, message string, time string, event_type_id string) string {
 	failure := ""
 
 	eventFH, err := json.Marshal(&EventFH{
 		Component:    component,
 		Message:      message,
-		Time:         time})
+		Time:         time,
+		EventTypeId:  event_type_id})
 	if err != nil {
 		failure = "Failed to convert EventFH"
 	} else {
