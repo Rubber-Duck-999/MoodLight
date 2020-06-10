@@ -62,6 +62,10 @@ type Fault struct {
     Name  string
 }
 
+type GUIDUpdate struct {
+	GUID string `json:"guid"`
+}
+
 const FAILURE string = "Failure.*"
 const FAILURENETWORK string = "Failure.Network"     //Level 5
 const FAILUREDATABASE string = "Failure.Database"   //Level 4
@@ -75,6 +79,7 @@ const MONITORSTATE string = "Monitor.State"
 const REQUESTPOWER string = "Request.Power"
 const EVENTFH string = "Event.FH"
 const STATUSFH string = "Status.FH"
+const GUIDUPDATE string = "GUID.Update"
 const EXCHANGENAME string = "topics"
 const EXCHANGETYPE string = "topic"
 const TIMEFORMAT string = "2006/01/02 15:04:05"
@@ -95,6 +100,9 @@ const UPDATESTATE_MESSAGE string = "The alarm state has been changed \n" +
 const UPDATESTATE string = "Motion state changed"
 const SERVERERROR string = "Server is failing to send"
 const MOTIONMESSAGE string = "There was movement, check the image on the drive"
+//
+const GUIDUPDATE_TITLE string = "Daily GUID Key Inside"
+const GUIDUPDATE_MESSAGE string = "Key: " 
 //
 const STATEUPDATESEVERITY int = 2
 const SERVERSEVERITY int = 4

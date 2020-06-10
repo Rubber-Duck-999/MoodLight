@@ -112,6 +112,11 @@ func checkState() {
 				camera.Count++
 				status.DailyFaults = checkDay(status.DailyFaults)
 
+			case SubscribedMessagesMap[message_id].routing_key == GUIDUPDATE:
+				var guidUpdate GUIDUpdate
+				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &guidUpdate)
+				messageFailure(SendEmailRoutine(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE + guidUpdate.GUID))
+
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
