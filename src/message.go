@@ -63,7 +63,34 @@ func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
 	fatal := sendEmail("Starting up Server", "Test")
+	sendLogsEmail()
 	return fatal
+}
+
+func sendLogsEmail() {
+	log.Debug("Sending logs email")
+	m := email.NewMessage("HouseGuard Daily Logs", "All included")
+	m.From = mail.Address{Name: _from_name, Address: _from_email}
+	m.To = []string{_to_email}
+
+	//Attachments
+	var files = [7]string{"old/DBM.txt", "old/EVM.txt", "old/FH.txt", 
+						"old/NAC.txt", "old/SYP.txt", "old/UP.txt", 
+						"old/cameramonitor.log"}
+	for _, file := range files {
+		if Exists(file) {
+			if err := m.Attach(file); err != nil {
+				log.Error(err)
+			}
+		}
+	}
+
+	// send it
+	auth := smtp.PlainAuth("", _email, _password, "smtp.zoho.eu")
+	if emailErr := email.Send("smtp.zoho.eu:587", auth, m); emailErr != nil {
+		log.Warn("Found a issue")
+		log.Warn(emailErr)
+	}
 }
 
 func setDate() {
