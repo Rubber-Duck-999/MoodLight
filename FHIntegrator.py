@@ -36,8 +36,10 @@ channel.queue_bind(exchange='topics', queue=queue_name, routing_key=key_power)
 #
 text = '{ "severity": 0, "component": "SYP", "action": null }'
 failure = '{ "time":"14:56:00", "type": "Camera", "severity": 1 }'
+monitor = '{ "state":false }'
 channel.basic_publish(exchange='topics', routing_key=key_issue, body=text)
 channel.basic_publish(exchange='topics', routing_key=key_failure_component, body=failure)
+channel.basic_publish(exchange='topics', routing_key=key_monitor, body=monitor)
 #
 print("Waiting for Messages")
 count = 0
