@@ -114,6 +114,7 @@ func checkState() {
 
 			case SubscribedMessagesMap[message_id].routing_key == GUIDUPDATE:
 				var guidUpdate GUIDUpdate
+				log.Debug("GUID Update")
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &guidUpdate)
 				messageFailure(SendEmailRoutine(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE + guidUpdate.GUID))
 				SubscribedMessagesMap[message_id].valid = false
