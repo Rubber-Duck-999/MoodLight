@@ -116,6 +116,7 @@ func checkState() {
 				var guidUpdate GUIDUpdate
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &guidUpdate)
 				messageFailure(SendEmailRoutine(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE + guidUpdate.GUID))
+				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
