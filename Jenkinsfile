@@ -6,6 +6,7 @@ pipeline {
             steps {
                 echo 'Building...'
                 sh '''cd src
+                      go install
                       go build
                 '''
             }
