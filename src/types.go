@@ -33,10 +33,10 @@ type RequestPower struct {
 }
 
 type EventFH struct {
-	Component    string `json:"component"`
-	Message      string `json:"message"`
-	Time         string `json:"time"`
-	EventTypeId  string `json:"event_type_id"`
+	Component   string `json:"component"`
+	Message     string `json:"message"`
+	Time        string `json:"time"`
+	EventTypeId string `json:"event_type_id"`
 }
 
 type MapMessage struct {
@@ -48,18 +48,18 @@ type MapMessage struct {
 
 type DeviceFound struct {
 	Device_name string `json:"name"`
-	Ip_address string `json:"address"`
-	Status int `json:"status"`
+	Ip_address  string `json:"address"`
+	Status      int    `json:"status"`
 }
 
 type StatusFH struct {
-	DailyFaults int `json:"daily_faults"`
+	DailyFaults  int    `json:"daily_faults"`
 	CommonFaults string `json:"common_faults"`
 }
 
 type Fault struct {
-    Count int
-    Name  string
+	Count int
+	Name  string
 }
 
 type GUIDUpdate struct {
@@ -71,8 +71,8 @@ const FAILURENETWORK string = "Failure.Network"     //Level 5
 const FAILUREDATABASE string = "Failure.Database"   //Level 4
 const FAILURECOMPONENT string = "Failure.Component" //Level 3
 const FAILUREACCESS string = "Failure.Access"       //Level 6
-const FAILURECAMERA string = "Failure.Camera" // Level 2
-const MOTIONDETECTED string = "Motion.Detected" //Level 7
+const FAILURECAMERA string = "Failure.Camera"       // Level 2
+const MOTIONDETECTED string = "Motion.Detected"     //Level 7
 
 const DEVICEFOUND string = "Device.Found"
 const MONITORSTATE string = "Monitor.State"
@@ -85,24 +85,29 @@ const EXCHANGETYPE string = "topic"
 const TIMEFORMAT string = "2006/01/02 15:04:05"
 const CAMERAMONITOR string = "CM"
 const COMPONENT string = "FH"
+
 //
-const DEVICE_TITLE string = "NETWORK ERROR"
-const DEVICEBLOCKED_MESSAGE string = "A blocked dveice has joined the\n" +
-									 "network. Device name: "
+const DEVICE_TITLE string = "New Device - Network"
+const DEVICEBLOCKED_MESSAGE string = "A blocked device has joined the\n" +
+	"network. Device name: "
 const DEVICEUNKNOWN_MESSAGE string = "A unknown device has joined the\n" +
-									 "network. Device name: "
+	"network. Device name: "
+
 //
-const UPDATESTATE_TITLE string = "Monitoring state changed"
-const UPDATESTATE_MESSAGE string = "The alarm state has been changed \n" +
-									"Please ensure that whoever enacted this " +
-									"was authorised to do so"
+const UPDATESTATE_TITLE string = "Alarm has been de/activated"
+const UPDATESTATE_MESSAGE string = "The alarm state has been changed.\n" +
+	"Please ensure that whoever enacted this " +
+	"was authorised to do so"
+
 //
 const UPDATESTATE string = "Motion state changed"
 const SERVERERROR string = "Server is failing to send"
-const MOTIONMESSAGE string = "There was movement, check the image on the drive"
+const MOTIONMESSAGE string = "There was movement in the property. \n Head to the drive space and check the image taken by HouseGuard"
+
 //
 const GUIDUPDATE_TITLE string = "Daily GUID Key Inside"
-const GUIDUPDATE_MESSAGE string = "Key: " 
+const GUIDUPDATE_MESSAGE string = "Key: "
+
 //
 const STATEUPDATESEVERITY int = 2
 const SERVERSEVERITY int = 4

@@ -44,14 +44,14 @@ func GetCommonFault() (string, int) {
 	max := 0
 	fault_string := "None"
 	faults := []Fault{network, database, software,
-								access, camera}
+		access, camera}
 	for _, local := range faults {
 		if local.Count > max {
 			max = local.Count
 			fault_string = local.Name
 		}
 	}
-	log.Debug("Common Fault found: ", fault_string +
+	log.Debug("Common Fault found: ", fault_string+
 		" with ", max, " faults")
 	return fault_string, max
 }
@@ -70,8 +70,8 @@ func checkState() {
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
 				log.Debug("Received a network failure message")
-				messageFailure(SendEmailRoutine("Server unable to respond", "The network is not responding or the\n " +
-												"firewall has shut down then network"))
+				messageFailure(SendEmailRoutine("Server unable to respond", "The network is not responding or the\n "+
+					"firewall has shut down then network"))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				network.Count++
 				SubscribedMessagesMap[message_id].valid = false
@@ -87,8 +87,8 @@ func checkState() {
 				var message FailureMessage
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
 				log.Warn("Failure in component: ", message.Failure_type)
-				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, \n" +
-					"please troubleshoot "  + message.Failure_type))
+				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, \n"+
+					"please troubleshoot this issue: "+message.Failure_type))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				software.Count++
 				SubscribedMessagesMap[message_id].valid = false
@@ -116,7 +116,7 @@ func checkState() {
 				var guidUpdate GUIDUpdate
 				log.Debug("GUID Update")
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &guidUpdate)
-				messageFailure(SendEmailRoutine(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE + guidUpdate.GUID))
+				messageFailure(SendEmailRoutine(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE+guidUpdate.GUID))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
@@ -137,13 +137,13 @@ func checkState() {
 				var device DeviceFound
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &device)
 				if device.Status == BLOCKED {
-					messageFailure(SendEmailRoutine(DEVICE_TITLE, 
-					DEVICEBLOCKED_MESSAGE + device.Device_name))
+					messageFailure(SendEmailRoutine(DEVICE_TITLE,
+						DEVICEBLOCKED_MESSAGE+device.Device_name))
 				} else if device.Status == UNKNOWN {
-					messageFailure(SendEmailRoutine(DEVICE_TITLE, 
-						DEVICEUNKNOWN_MESSAGE + device.Device_name))
+					messageFailure(SendEmailRoutine(DEVICE_TITLE,
+						DEVICEUNKNOWN_MESSAGE+device.Device_name))
 				}
-				SubscribedMessagesMap[message_id].valid = false				
+				SubscribedMessagesMap[message_id].valid = false
 
 			default:
 				log.Warn("We were not expecting this message unvalidating: ",
