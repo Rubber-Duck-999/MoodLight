@@ -28,11 +28,10 @@ func TestSendFailureEmail(t *testing.T) {
 // to send as no details have been inputted
 func TestSendAttachedFailureEmail(t *testing.T) {
 	SetState(true)
-	if SendAttachedRoutine("Test", "../config.yml-fail") == false {
+	if sendAttachedEmail("Test", "../config.yml-fail") == false {
 		t.Error("Failure")
 	}
 }
-
 
 // Check that State is set and an Email is attempted
 // then run this test will prove it is set

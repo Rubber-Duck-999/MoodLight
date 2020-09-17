@@ -5,7 +5,6 @@ type ConfigTypes struct {
 		Email    string `yaml:"email"`
 		Password string `yaml:"password"`
 		Name     string `yaml:"name"`
-		To_email string `yaml:"to_email"`
 	} `yaml:"email_settings"`
 	MessageSettings struct {
 		Password string `yaml:"passcode"`
@@ -34,7 +33,6 @@ type RequestPower struct {
 
 type EventFH struct {
 	Component   string `json:"component"`
-	Message     string `json:"message"`
 	Time        string `json:"time"`
 	EventTypeId string `json:"event_type_id"`
 }
@@ -50,6 +48,19 @@ type DeviceFound struct {
 	Device_name string `json:"name"`
 	Ip_address  string `json:"address"`
 	Status      int    `json:"status"`
+}
+
+type EmailRequest struct {
+	Role string `json:"role"`
+}
+
+type EmailResponse struct {
+	Accounts []Account `json:"accounts"`
+}
+
+type Account struct {
+	email string `json:"email"`
+	role  string `json:"role"`
 }
 
 type StatusFH struct {
@@ -76,7 +87,8 @@ const MOTIONDETECTED string = "Motion.Detected"     //Level 7
 
 const DEVICEFOUND string = "Device.Found"
 const MONITORSTATE string = "Monitor.State"
-const REQUESTPOWER string = "Request.Power"
+const EMAILREQUEST string = "Email.Request"
+const EMAILRESPONSE string = "Email.Response"
 const EVENTFH string = "Event.FH"
 const STATUSFH string = "Status.FH"
 const GUIDUPDATE string = "GUID.Update"
@@ -107,6 +119,10 @@ const MOTIONMESSAGE string = "There was movement in the property. \n Head to the
 //
 const GUIDUPDATE_TITLE string = "Daily GUID Key Inside"
 const GUIDUPDATE_MESSAGE string = "Key: "
+
+//
+const BOTH_ROLE string = "BOTH"
+const ADMIN_ROLE string = "ADMIN"
 
 //
 const STATEUPDATESEVERITY int = 2

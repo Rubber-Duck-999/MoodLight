@@ -26,10 +26,10 @@ func checkDay(daily int) int {
 	}
 }
 
-func SetEmailSettings(email string, password string, from_name string, to_email string) bool {
+func SetEmailSettings(email string, password string, from_name string) bool {
 	shutdown_valid := false
 	log.Trace("Email is: ", email)
-	SetSettings(email, password, email, from_name, to_email)
+	SetSettings(email, password, email, from_name)
 	setup_invalid := TestEmail()
 	log.Debug("Email test success : ", !setup_invalid)
 	if setup_invalid {
@@ -65,20 +65,27 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
 				var message MotionDetected
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				messageFailure(SendEmailRoutine("We have movement in the flat", MOTIONMESSAGE))
+				messageFailure(sendEmail("We have movement in the flat", MOTIONMESSAGE, ""))
 				SubscribedMessagesMap[message_id].valid = false
+
+			case SubscribedMessagesMap[message_id].routing_key == EMAILRESPONSE:
+				var message EmailResponse
+				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
+				for email, role := range message.Accounts {
+					log.Debug("Received: ", role, " and email: ", email)
+				}
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
 				log.Debug("Received a network failure message")
-				messageFailure(SendEmailRoutine("Server unable to respond", "The network is not responding or the\n "+
-					"firewall has shut down then network"))
+				messageFailure(sendEmail("Server unable to respond", "The network is not responding or the\n "+
+					"firewall has shut down then network", ""))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				network.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
 				log.Debug("Received a database failure message")
-				messageFailure(SendEmailRoutine("Data failure HouseGuard", "Serious Database failure"))
+				messageFailure(sendEmail("Data failure HouseGuard", "Serious Database failure", ""))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				database.Count++
 				SubscribedMessagesMap[message_id].valid = false
@@ -87,43 +94,35 @@ func checkState() {
 				var message FailureMessage
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
 				log.Warn("Failure in component: ", message.Failure_type)
-				messageFailure(SendEmailRoutine("Software not responding", "Serious Component failure, \n"+
-					"please troubleshoot this issue: "+message.Failure_type))
+				messageFailure(sendEmail("Software not responding", "Serious Component failure, \n"+
+					"please troubleshoot this issue: "+message.Failure_type, ""))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				software.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
-				messageFailure(SendEmailRoutine("Multiple pin attempts", "Please check the alarm immediately"))
+				messageFailure(sendEmail("Multiple pin attempts", "Please check the alarm immediately", ""))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				access.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURECAMERA:
-				var message FailureMessage
-				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				valid := PublishRequestPower("restart", 5, CAMERAMONITOR)
-				if valid != "" {
-					log.Warn("Failed to publish")
-				} else {
-					log.Debug("Published Request Power")
-					SubscribedMessagesMap[message_id].valid = false
-				}
 				camera.Count++
 				status.DailyFaults = checkDay(status.DailyFaults)
+				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == GUIDUPDATE:
 				var guidUpdate GUIDUpdate
 				log.Debug("GUID Update")
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &guidUpdate)
-				messageFailure(SendEmailRoutine(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE+guidUpdate.GUID))
+				messageFailure(sendEmail(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE+guidUpdate.GUID, ""))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
 				SetState(true)
-				messageFailure(SendEmailRoutine(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE))
+				messageFailure(sendEmail(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE, ""))
 				SetState(monitor.State)
 				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
 				if valid != "" {
@@ -137,11 +136,11 @@ func checkState() {
 				var device DeviceFound
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &device)
 				if device.Status == BLOCKED {
-					messageFailure(SendEmailRoutine(DEVICE_TITLE,
-						DEVICEBLOCKED_MESSAGE+device.Device_name))
+					messageFailure(sendEmail(DEVICE_TITLE,
+						DEVICEBLOCKED_MESSAGE+device.Device_name, ""))
 				} else if device.Status == UNKNOWN {
-					messageFailure(SendEmailRoutine(DEVICE_TITLE,
-						DEVICEUNKNOWN_MESSAGE+device.Device_name))
+					messageFailure(sendEmail(DEVICE_TITLE,
+						DEVICEUNKNOWN_MESSAGE+device.Device_name, ""))
 				}
 				SubscribedMessagesMap[message_id].valid = false
 

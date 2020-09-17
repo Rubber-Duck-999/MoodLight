@@ -34,8 +34,7 @@ func main() {
 	if data.EmailSettings.Email != "" {
 		not_valid := SetEmailSettings(data.EmailSettings.Email,
 			data.EmailSettings.Password,
-			data.EmailSettings.Name,
-			data.EmailSettings.To_email)
+			data.EmailSettings.Name)
 		SetPassword(data.MessageSettings.Password)
 		if not_valid {
 			os.Exit(1)

@@ -25,36 +25,36 @@ func init() {
 	SetState(true)
 
 	status = StatusFH{
-		DailyFaults: 0,
+		DailyFaults:  0,
 		CommonFaults: "N/A"}
 
 	_, _, day := time.Now().Date()
 	log.Debug("Current day is set to: ", day)
 
 	network = Fault{
-        Count: 0,
-        Name:  "Network Fault",
+		Count: 0,
+		Name:  "Network Fault",
 	}
-	
+
 	database = Fault{
-        Count: 0,
-        Name:  "Database Fault",
+		Count: 0,
+		Name:  "Database Fault",
 	}
-	
+
 	software = Fault{
-        Count: 0,
-        Name:  "Software Fault",
+		Count: 0,
+		Name:  "Software Fault",
 	}
-	
+
 	access = Fault{
-        Count: 0,
-        Name:  "Alarm Access Fault",
+		Count: 0,
+		Name:  "Alarm Access Fault",
 	}
-	
+
 	camera = Fault{
-        Count: 0,
-        Name:  "Camera Fault",
-    }
+		Count: 0,
+		Name:  "Camera Fault",
+	}
 
 }
 
@@ -99,7 +99,7 @@ func messages(routing_key string, value string) {
 	}
 }
 
-func SetConnection() error{
+func SetConnection() error {
 	conn, init_err = amqp.Dial("amqp://guest:" + password + "@localhost:5672/")
 	failOnError(init_err, "Failed to connect to RabbitMQ")
 
@@ -113,12 +113,13 @@ func Subscribe() {
 	log.Trace("Beginning rabbitmq initialisation")
 	log.Warn("Rabbitmq error:", init)
 	if init == nil {
-		var topics = [5]string{
+		var topics = [6]string{
 			FAILURE,
 			MOTIONDETECTED,
 			MONITORSTATE,
 			DEVICEFOUND,
 			GUIDUPDATE,
+			EMAILRESPONSE,
 		}
 
 		err := ch.ExchangeDeclare(
@@ -195,6 +196,31 @@ func StatusCheck() {
 	}
 }
 
+func PublishEmailRequest(role string) string {
+	failure := ""
+	emailRequest, err := json.Marshal(&EmailRequest{
+		Role: role})
+	failOnError(err, "Failed to convert StatusFH")
+	log.Debug(string(emailRequest))
+
+	if err == nil {
+		err = ch.Publish(
+			EXCHANGENAME, // exchange
+			STATUSFH,     // routing key
+			false,        // mandatory
+			false,        // immediate
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        []byte(emailRequest),
+			})
+		if err != nil {
+			failOnError(err, "Failed to publish Email Request topic")
+			failure = FAILUREPUBLISH
+		}
+	}
+	return failure
+}
+
 func PublishStatusFH() string {
 	failure := ""
 	message, err := json.Marshal(&status)
@@ -204,7 +230,7 @@ func PublishStatusFH() string {
 	if err == nil {
 		err = ch.Publish(
 			EXCHANGENAME, // exchange
-			STATUSFH, // routing key
+			STATUSFH,     // routing key
 			false,        // mandatory
 			false,        // immediate
 			amqp.Publishing{
@@ -219,41 +245,13 @@ func PublishStatusFH() string {
 	return failure
 }
 
-func PublishRequestPower(this_power string, this_severity int, this_component string) string {
-	failure := ""
-	requestPower, err := json.Marshal(&RequestPower{
-		Power:     this_power,
-		Severity:  this_severity,
-		Component: this_component})
-	failOnError(err, "Failed to convert RequestPower")
-	log.Debug(string(requestPower))
-
-	if err == nil {
-		err = ch.Publish(
-			EXCHANGENAME, // exchange
-			REQUESTPOWER, // routing key
-			false,        // mandatory
-			false,        // immediate
-			amqp.Publishing{
-				ContentType: "application/json",
-				Body:        []byte(requestPower),
-			})
-		if err != nil {
-			failOnError(err, "Failed to publish RequestPower topic")
-			failure = FAILUREPUBLISH
-		}
-	}
-	return failure
-}
-
 func PublishEventFH(component string, message string, time string, event_type_id string) string {
 	failure := ""
 
 	eventFH, err := json.Marshal(&EventFH{
-		Component:    component,
-		Message:      message,
-		Time:         time,
-		EventTypeId:  event_type_id})
+		Component:   component,
+		Time:        time,
+		EventTypeId: event_type_id})
 	if err != nil {
 		failure = "Failed to convert EventFH"
 	} else {

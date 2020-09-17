@@ -2,7 +2,6 @@ email_settings:
   email: "myemail"
   password: "password"
   name: "rubber-duck-999"
-  to_email: "external@gmail"
 message_settings:
   sid: "999"
   toke: "999"

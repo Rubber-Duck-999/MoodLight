@@ -3,10 +3,11 @@ package main
 import (
 	"time"
 
-	"github.com/scorredoira/email"
-	log "github.com/sirupsen/logrus"
 	"net/mail"
 	"net/smtp"
+
+	"github.com/scorredoira/email"
+	log "github.com/sirupsen/logrus"
 )
 
 var _state bool
@@ -17,7 +18,7 @@ var _body string
 var _from_email string
 var _from_name string
 var _to_email string
-var _year int 
+var _year int
 var _month time.Month
 var _day int
 var _messages_sent int
@@ -48,7 +49,7 @@ func getState() bool {
 }
 
 func SetSettings(email string, password string, from_email string,
-	from_name string, to_email string) {
+	from_name string) {
 	log.Trace("Setting settings")
 	_subject = "Test Email"
 	_body = ""
@@ -56,13 +57,13 @@ func SetSettings(email string, password string, from_email string,
 	_password = password
 	_from_email = from_email
 	_from_name = from_name
-	_to_email = to_email
 }
 
 func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
-	fatal := sendEmail("Starting up Server", "Test")
+
+	fatal := sendEmail("Starting up Server", "Test", _email)
 	sendLogsEmail()
 	return fatal
 }
@@ -74,9 +75,9 @@ func sendLogsEmail() {
 	m.To = []string{_to_email}
 
 	//Attachments
-	var files = [7]string{"logs/DBM.txt", "logs/EVM.txt", "logs/oldFH.txt", 
-						"logs/NAC.txt", "logs/SYP.txt", "logs/UP.txt", 
-						"logs/cameramonitor.log"}
+	var files = [7]string{"logs/DBM.txt", "logs/EVM.txt", "logs/oldFH.txt",
+		"logs/NAC.txt", "logs/SYP.txt", "logs/UP.txt",
+		"logs/cameramonitor.log"}
 	for _, file := range files {
 		if Exists(file) {
 			if err := m.Attach(file); err != nil {
@@ -119,17 +120,7 @@ func checkCanSend() bool {
 	return false
 }
 
-func SendEmailRoutine(subject string, issue string) bool {
-	event := sendEmail(subject, issue)
-	return event
-}
-
-func SendAttachedRoutine(issue string, file string) bool {
-	event := sendAttachmentEmail(issue, file)
-	return event
-}
-
-func sendEmail(subject string, issue string) bool {
+func sendEmail(subject string, issue string, to_email string) bool {
 	// compose the message
 	fatal := false
 	if _state && checkCanSend() {
@@ -137,7 +128,7 @@ func sendEmail(subject string, issue string) bool {
 		_body = issue
 		m := email.NewMessage(subject, _body)
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
-		m.To = []string{_to_email}
+		m.To = []string{to_email}
 
 		// send it
 		auth := smtp.PlainAuth("", _email, _password, "smtp.zoho.eu")
@@ -152,7 +143,7 @@ func sendEmail(subject string, issue string) bool {
 	return fatal
 }
 
-func sendAttachmentEmail(issue string, file string) bool {
+func sendAttachmentEmail(issue string, file string, to_email string) bool {
 	// compose the message
 	fatal := false
 	if _state && checkCanSend() {
@@ -161,7 +152,7 @@ func sendAttachmentEmail(issue string, file string) bool {
 		_subject = "Movement in Flat"
 		m := email.NewMessage(_subject, _body)
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
-		m.To = []string{_to_email}
+		m.To = []string{to_email}
 
 		//Attachments
 		if Exists(file) {
@@ -170,7 +161,6 @@ func sendAttachmentEmail(issue string, file string) bool {
 				fatal = true
 			}
 		}
-
 
 		// send it
 		auth := smtp.PlainAuth("", _email, _password, "smtp.zoho.eu")
