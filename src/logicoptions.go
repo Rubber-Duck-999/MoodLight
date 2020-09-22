@@ -59,6 +59,10 @@ func GetCommonFault() (string, int) {
 func checkState() {
 	for message_id := range SubscribedMessagesMap {
 		if SubscribedMessagesMap[message_id].valid == true {
+			if first {
+				PublishEmailRequest(ADMIN_ROLE)
+				first = false
+			}
 			log.Debug("Message id is: ", message_id)
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
