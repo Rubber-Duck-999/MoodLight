@@ -62,16 +62,11 @@ func checkState() {
 			if first {
 				PublishEmailRequest(ADMIN_ROLE)
 				first = false
+				return
 			}
 			log.Debug("Message id is: ", message_id)
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
-			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
-				var message MotionDetected
-				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				messageFailure(sendEmail("We have movement in the flat", MOTIONMESSAGE, ""))
-				SubscribedMessagesMap[message_id].valid = false
-
 			case SubscribedMessagesMap[message_id].routing_key == EMAILRESPONSE:
 				var message EmailResponse
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
@@ -81,6 +76,12 @@ func checkState() {
 						_to_email = account.email
 					}
 				}
+				SubscribedMessagesMap[message_id].valid = false
+
+			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
+				var message MotionDetected
+				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
+				messageFailure(sendEmail("We have movement in the flat", MOTIONMESSAGE, ""))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
