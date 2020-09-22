@@ -39,6 +39,7 @@ func main() {
 		if not_valid {
 			os.Exit(1)
 		}
+		PublishEmailRequest(ADMIN_ROLE)
 		Subscribe()
 	} else {
 		log.Error("File not converted correctly")

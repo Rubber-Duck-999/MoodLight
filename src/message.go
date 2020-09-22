@@ -57,6 +57,7 @@ func SetSettings(email string, password string, from_email string,
 	_password = password
 	_from_email = from_email
 	_from_name = from_name
+	_to_email = from_email
 }
 
 func TestEmail() bool {

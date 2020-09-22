@@ -71,9 +71,13 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == EMAILRESPONSE:
 				var message EmailResponse
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				for email, role := range message.Accounts {
-					log.Debug("Received: ", role, " and email: ", email)
+				for _, account := range message.Accounts {
+					log.Debug("Received: ", account.role, " and email: ", account.email)
+					if account.role == ADMIN_ROLE {
+						_to_email = account.email
+					}
 				}
+				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
 				log.Debug("Received a network failure message")

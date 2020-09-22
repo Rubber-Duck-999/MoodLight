@@ -200,7 +200,7 @@ func PublishEmailRequest(role string) string {
 	failure := ""
 	emailRequest, err := json.Marshal(&EmailRequest{
 		Role: role})
-	failOnError(err, "Failed to convert StatusFH")
+	failOnError(err, "Failed to convert EmailRequest")
 	log.Debug(string(emailRequest))
 
 	if err == nil {
