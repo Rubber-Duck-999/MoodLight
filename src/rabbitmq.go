@@ -19,7 +19,6 @@ var software Fault
 var access Fault
 var camera Fault
 var day int
-var email_set bool
 var email_changed bool
 
 func init() {

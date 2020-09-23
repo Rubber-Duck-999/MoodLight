@@ -58,7 +58,7 @@ func GetCommonFault() (string, int) {
 
 func checkState() {
 	for message_id := range SubscribedMessagesMap {
-		if SubscribedMessagesMap[message_id].valid == true && email_set {
+		if SubscribedMessagesMap[message_id].valid == true {
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
 			case SubscribedMessagesMap[message_id].routing_key == EMAILRESPONSE:
@@ -71,7 +71,7 @@ func checkState() {
 						SetEmail(account.Email)
 						SubscribedMessagesMap[message_id].valid = false
 						email_changed = true
-						sendEmail("Setting Up new email", "Admin Authorised")
+						//sendEmail("Setting Up new email", "Admin Authorised")
 					}
 				}
 
@@ -172,9 +172,6 @@ func checkState() {
 				SubscribedMessagesMap[message_id].valid = false
 			}
 			StatusCheck()
-		} else {
-			PublishEmailRequest(ADMIN_ROLE)
-			email_set = true
 		}
 	}
 
