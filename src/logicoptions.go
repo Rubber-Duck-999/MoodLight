@@ -82,20 +82,20 @@ func checkState() {
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
 				var message MotionDetected
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				messageFailure(sendEmail("We have movement in the flat", MOTIONMESSAGE, ""))
+				messageFailure(sendEmail("We have movement in the flat", MOTIONMESSAGE))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
 				log.Debug("Received a network failure message")
 				messageFailure(sendEmail("Server unable to respond", "The network is not responding or the\n "+
-					"firewall has shut down then network", ""))
+					"firewall has shut down then network"))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				network.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
 				log.Debug("Received a database failure message")
-				messageFailure(sendEmail("Data failure HouseGuard", "Serious Database failure", ""))
+				messageFailure(sendEmail("Data failure HouseGuard", "Serious Database failure"))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				database.Count++
 				SubscribedMessagesMap[message_id].valid = false
@@ -105,13 +105,13 @@ func checkState() {
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
 				log.Warn("Failure in component: ", message.Failure_type)
 				messageFailure(sendEmail("Software not responding", "Serious Component failure, \n"+
-					"please troubleshoot this issue: "+message.Failure_type, ""))
+					"please troubleshoot this issue: "+message.Failure_type))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				software.Count++
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
-				messageFailure(sendEmail("Multiple pin attempts", "Please check the alarm immediately", ""))
+				messageFailure(sendEmail("Multiple pin attempts", "Please check the alarm immediately"))
 				status.DailyFaults = checkDay(status.DailyFaults)
 				access.Count++
 				SubscribedMessagesMap[message_id].valid = false
@@ -125,14 +125,14 @@ func checkState() {
 				var guidUpdate GUIDUpdate
 				log.Debug("GUID Update")
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &guidUpdate)
-				messageFailure(sendEmail(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE+guidUpdate.GUID, ""))
+				messageFailure(sendEmail(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE+guidUpdate.GUID))
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
 				SetState(true)
-				messageFailure(sendEmail(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE, ""))
+				messageFailure(sendEmail(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE))
 				SetState(monitor.State)
 				valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
 				if valid != "" {
@@ -147,10 +147,10 @@ func checkState() {
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &device)
 				if device.Status == BLOCKED {
 					messageFailure(sendEmail(DEVICE_TITLE,
-						DEVICEBLOCKED_MESSAGE+device.Device_name, ""))
+						DEVICEBLOCKED_MESSAGE+device.Device_name))
 				} else if device.Status == UNKNOWN {
 					messageFailure(sendEmail(DEVICE_TITLE,
-						DEVICEUNKNOWN_MESSAGE+device.Device_name, ""))
+						DEVICEUNKNOWN_MESSAGE+device.Device_name))
 				}
 				SubscribedMessagesMap[message_id].valid = false
 

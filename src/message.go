@@ -62,7 +62,7 @@ func TestEmail() bool {
 	_subject = "Test Email"
 	_body = ""
 
-	fatal := sendEmail("Starting up Server", "Test", _email)
+	fatal := sendEmail("Starting up Server", "Test")
 	sendLogsEmail()
 	return fatal
 }
@@ -119,7 +119,7 @@ func checkCanSend() bool {
 	return false
 }
 
-func sendEmail(subject string, issue string, to_email string) bool {
+func sendEmail(subject string, issue string) bool {
 	// compose the message
 	fatal := false
 	if _state && checkCanSend() {
@@ -127,7 +127,7 @@ func sendEmail(subject string, issue string, to_email string) bool {
 		_body = issue
 		m := email.NewMessage(subject, _body)
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
-		m.To = []string{to_email}
+		m.To = []string{_to_email}
 
 		// send it
 		auth := smtp.PlainAuth("", _email, _password, "smtp.zoho.eu")
@@ -142,7 +142,7 @@ func sendEmail(subject string, issue string, to_email string) bool {
 	return fatal
 }
 
-func sendAttachmentEmail(issue string, file string, to_email string) bool {
+func sendAttachmentEmail(issue string, file string) bool {
 	// compose the message
 	fatal := false
 	if _state && checkCanSend() {
@@ -151,7 +151,7 @@ func sendAttachmentEmail(issue string, file string, to_email string) bool {
 		_subject = "Movement in Flat"
 		m := email.NewMessage(_subject, _body)
 		m.From = mail.Address{Name: _from_name, Address: _from_email}
-		m.To = []string{to_email}
+		m.To = []string{_to_email}
 
 		//Attachments
 		if Exists(file) {
