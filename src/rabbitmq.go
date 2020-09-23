@@ -203,12 +203,12 @@ func PublishEmailRequest(role string) string {
 	emailRequest, err := json.Marshal(&EmailRequest{
 		Role: role})
 	failOnError(err, "Failed to convert EmailRequest")
-	log.Debug(string(emailRequest))
+	log.Debug("Publishing Email.Request")
 
 	if err == nil {
 		err = ch.Publish(
 			EXCHANGENAME, // exchange
-			STATUSFH,     // routing key
+			EMAILREQUEST, // routing key
 			false,        // mandatory
 			false,        // immediate
 			amqp.Publishing{
@@ -274,6 +274,5 @@ func PublishEventFH(component string, message string, time string, event_type_id
 			}
 		}
 	}
-	log.Warn(failure)
 	return failure
 }

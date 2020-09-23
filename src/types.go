@@ -59,8 +59,8 @@ type EmailResponse struct {
 }
 
 type Account struct {
-	email string `json:"email"`
-	role  string `json:"role"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }
 
 type StatusFH struct {

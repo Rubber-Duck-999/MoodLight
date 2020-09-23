@@ -59,24 +59,25 @@ func GetCommonFault() (string, int) {
 func checkState() {
 	for message_id := range SubscribedMessagesMap {
 		if SubscribedMessagesMap[message_id].valid == true {
+			log.Debug("Message id is: ", message_id)
+			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			if first {
 				PublishEmailRequest(ADMIN_ROLE)
 				first = false
 				return
 			}
-			log.Debug("Message id is: ", message_id)
-			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
 			case SubscribedMessagesMap[message_id].routing_key == EMAILRESPONSE:
 				var message EmailResponse
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
+				log.Debug("Content: ", SubscribedMessagesMap[message_id].message)
 				for _, account := range message.Accounts {
-					log.Debug("Received: ", account.role, " and email: ", account.email)
-					if account.role == ADMIN_ROLE {
-						_to_email = account.email
+					log.Debug("Received: ", account.Role, " and email: ", account.Email)
+					if account.Role == ADMIN_ROLE {
+						_to_email = account.Email
+						SubscribedMessagesMap[message_id].valid = false
 					}
 				}
-				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
 				var message MotionDetected

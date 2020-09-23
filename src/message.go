@@ -38,9 +38,7 @@ func init() {
 
 func SetState(state bool) {
 	log.Debug("Requested to change our monitoring state")
-	log.WithFields(log.Fields{
-		"State": _state, "New State": state,
-	}).Debug("State change")
+	log.Debug("State change from: ", _state, " to: ", state)
 	_state = state
 }
 
