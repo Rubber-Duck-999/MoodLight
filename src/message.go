@@ -58,10 +58,11 @@ func SetSettings(email string, password string, from_email string,
 	_to_email = from_email
 }
 
-func TestEmail() bool {
-	_subject = "Test Email"
-	_body = ""
+func SetEmail(email string) {
+	_to_email = email
+}
 
+func TestEmail() bool {
 	fatal := sendEmail("Starting up Server", "Test")
 	sendLogsEmail()
 	return fatal

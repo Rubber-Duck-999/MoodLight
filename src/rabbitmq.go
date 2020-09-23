@@ -19,12 +19,14 @@ var software Fault
 var access Fault
 var camera Fault
 var day int
-var first bool
+var email_set bool
+var email_changed bool
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
 	SetState(true)
-	first = true
+	email_set = false
+	email_changed = false
 
 	status = StatusFH{
 		DailyFaults:  0,

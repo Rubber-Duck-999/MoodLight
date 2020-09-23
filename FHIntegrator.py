@@ -35,16 +35,17 @@ result = channel.queue_declare('', exclusive=False, durable=True)
 queue_name = result.method.queue
 channel.queue_bind(exchange='topics', queue=queue_name, routing_key=key_event)
 channel.queue_bind(exchange='topics', queue=queue_name, routing_key=key_power)
-#channel.queue_bind(exchange='topics', queue=queue_name, routing_key=key_email_request)
+channel.queue_bind(exchange='topics', queue=queue_name, routing_key=key_email_request)
 #
 text = '{ "severity": 0, "component": "SYP", "action": null }'
 failure = '{ "time":"14:56:00", "type": "Camera", "severity": 1 }'
 monitor = '{ "state":false }'
-email = '{ "accounts":[ { "email": "simon.crowther95@hotmail.co.uk", "role": "ADMIN" }] }'
+email = '{ "accounts":[ { "role": "ADMIN", "email": "simon.crowther95@hotmail.co.uk" }] }'
 channel.basic_publish(exchange='topics', routing_key=key_issue, body=text)
 channel.basic_publish(exchange='topics', routing_key=key_failure_component, body=failure)
 channel.basic_publish(exchange='topics', routing_key=key_monitor, body=monitor)
-#channel.basic_publish(exchange='topics', routing_key=key_email_response, body=email)
+time.sleep(3)
+channel.basic_publish(exchange='topics', routing_key=key_email_response, body=email)
 #
 print("Waiting for Messages")
 count = 0
