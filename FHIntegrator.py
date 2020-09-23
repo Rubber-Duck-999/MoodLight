@@ -40,7 +40,7 @@ channel.queue_bind(exchange='topics', queue=queue_name, routing_key=key_email_re
 text = '{ "severity": 0, "component": "SYP", "action": null }'
 failure = '{ "time":"14:56:00", "type": "Camera", "severity": 1 }'
 monitor = '{ "state":false }'
-email = '{ "accounts":[ { "role": "ADMIN", "email": "simon.crowther95@hotmail.co.uk" }] }'
+email = '{ "accounts":[ { "role": "ADMIN", "email": "N/A" }] }'
 channel.basic_publish(exchange='topics', routing_key=key_issue, body=text)
 channel.basic_publish(exchange='topics', routing_key=key_failure_component, body=failure)
 channel.basic_publish(exchange='topics', routing_key=key_monitor, body=monitor)
