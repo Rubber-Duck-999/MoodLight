@@ -60,18 +60,22 @@ func checkState() {
 	for message_id := range SubscribedMessagesMap {
 		if SubscribedMessagesMap[message_id].valid == true {
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
+			if first {
+				PublishEmailRequest(ADMIN_ROLE)
+				first = false
+			}
 			switch {
 			case SubscribedMessagesMap[message_id].routing_key == EMAILRESPONSE:
 				var message EmailResponse
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				log.Debug("Content: ", SubscribedMessagesMap[message_id].message)
 				for _, account := range message.Accounts {
-					log.Debug("Received: ", account.Role, " and email: ", account.Email)
 					if account.Role == "admin" {
+						log.Warn("Correct role recieved")
 						SetEmail(account.Email)
 						SubscribedMessagesMap[message_id].valid = false
 						email_changed = true
-						//sendEmail("Setting Up new email", "Admin Authorised")
+						sendEmail("Setting Up new email", "Admin Authorised")
+						checkState()
 					}
 				}
 

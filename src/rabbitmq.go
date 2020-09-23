@@ -20,11 +20,13 @@ var access Fault
 var camera Fault
 var day int
 var email_changed bool
+var first bool
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
 	SetState(true)
 	email_changed = false
+	first = true
 
 	status = StatusFH{
 		DailyFaults:  0,
@@ -227,7 +229,7 @@ func PublishStatusFH() string {
 	failure := ""
 	message, err := json.Marshal(&status)
 	failOnError(err, "Failed to convert StatusFH")
-	log.Debug(string(message))
+	log.Debug("Publishing Status.FH")
 
 	if err == nil {
 		err = ch.Publish(
@@ -258,7 +260,7 @@ func PublishEventFH(component string, message string, time string, event_type_id
 		failure = "Failed to convert EventFH"
 	} else {
 		if init_err == nil {
-			log.Debug(string(eventFH))
+			log.Debug("Publishing Event.FH")
 			err = ch.Publish(
 				EXCHANGENAME, // exchange
 				EVENTFH,      // routing key
