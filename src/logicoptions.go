@@ -67,7 +67,7 @@ func checkState() {
 				log.Debug("Content: ", SubscribedMessagesMap[message_id].message)
 				for _, account := range message.Accounts {
 					log.Debug("Received: ", account.Role, " and email: ", account.Email)
-					if account.Role == ADMIN_ROLE {
+					if account.Role == "admin" {
 						SetEmail(account.Email)
 						SubscribedMessagesMap[message_id].valid = false
 						email_changed = true
