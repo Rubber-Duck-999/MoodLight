@@ -24,7 +24,6 @@ var email_changed bool
 func init() {
 	log.Trace("Initialised rabbitmq package")
 	SetState(true)
-	email_set = false
 	email_changed = false
 
 	status = StatusFH{
