@@ -6,8 +6,7 @@ Created on 10 Oct 2019
 
 #!/usr/bin/env python
 import pika
-import sys, time, json
-import subprocess
+import time
 ###
 # Fault Handler Integrator
 # This is to show how the FH could manage on
