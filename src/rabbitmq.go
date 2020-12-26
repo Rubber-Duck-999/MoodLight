@@ -91,6 +91,9 @@ func messages(routing_key string, value string) {
 			_, valid := SubscribedMessagesMap[key_id]
 			if valid {
 				log.Debug("Key already exists, checking next field: ", key_id)
+				if key_id == 100 {
+					key_id = 0
+				}
 				key_id++
 				messages(routing_key, value)
 			} else {
@@ -200,41 +203,13 @@ func StatusCheck() {
 	}
 }
 
-func PublishEmailRequest(role string) string {
-	failure := ""
-	emailRequest, err := json.Marshal(&EmailRequest{
-		Role: role})
-	failOnError(err, "Failed to convert EmailRequest")
-	log.Debug("Publishing Email.Request")
 
-	if err == nil {
-		err = ch.Publish(
+func Publish(message []byte, routingKey string) string {
+	if init_err == nil {
+		log.Debug(string(message))
+		err := ch.Publish(
 			EXCHANGENAME, // exchange
-			EMAILREQUEST, // routing key
-			false,        // mandatory
-			false,        // immediate
-			amqp.Publishing{
-				ContentType: "application/json",
-				Body:        []byte(emailRequest),
-			})
-		if err != nil {
-			failOnError(err, "Failed to publish Email Request topic")
-			failure = FAILUREPUBLISH
-		}
-	}
-	return failure
-}
-
-func PublishStatusFH() string {
-	failure := ""
-	message, err := json.Marshal(&status)
-	failOnError(err, "Failed to convert StatusFH")
-	log.Debug("Publishing Status.FH")
-
-	if err == nil {
-		err = ch.Publish(
-			EXCHANGENAME, // exchange
-			STATUSFH,     // routing key
+			routingKey,   // routing key
 			false,        // mandatory
 			false,        // immediate
 			amqp.Publishing{
@@ -242,39 +217,40 @@ func PublishStatusFH() string {
 				Body:        []byte(message),
 			})
 		if err != nil {
-			failOnError(err, "Failed to publish Status FH topic")
-			failure = FAILUREPUBLISH
+			log.Fatal(err)
+			return FAILUREPUBLISH
 		}
 	}
-	return failure
+	return ""
+}
+
+func PublishEmailRequest(role string) string {
+	emailRequest, err := json.Marshal(&EmailRequest{
+		Role: role})
+	if err != nil {
+		return "Failed to convert EmailRequest"
+	} else {
+		return Publish(emailRequest, EMAILREQUEST)
+	}
+}
+
+func PublishStatusFH() string {
+	message, err := json.Marshal(&status)
+	if err != nil {
+		return "Failed to convert StatusFH"
+	} else {
+		return Publish(message, STATUSFH)
+	}
 }
 
 func PublishEventFH(component string, message string, time string, event_type_id string) string {
-	failure := ""
-
 	eventFH, err := json.Marshal(&EventFH{
 		Component:   component,
 		Time:        time,
 		EventTypeId: event_type_id})
 	if err != nil {
-		failure = "Failed to convert EventFH"
+		return "Failed to convert EventFH"
 	} else {
-		if init_err == nil {
-			log.Debug("Publishing Event.FH")
-			err = ch.Publish(
-				EXCHANGENAME, // exchange
-				EVENTFH,      // routing key
-				false,        // mandatory
-				false,        // immediate
-				amqp.Publishing{
-					ContentType: "application/json",
-					Body:        []byte(eventFH),
-				})
-			if err != nil {
-				log.Fatal(err)
-				failure = FAILUREPUBLISH
-			}
-		}
+		return Publish(eventFH, EVENTFH)
 	}
-	return failure
 }
