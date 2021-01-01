@@ -40,6 +40,20 @@ func SetEmailSettings(email string, password string, from_name string) bool {
 	return shutdown_valid
 }
 
+func checkLogicMonitor(monitor MonitorState) string {
+	var message string
+	if monitor.State == true {
+		message = ACTIVATE_TITLE
+		publishCameraStart()
+	} else {
+		message = DEACTIVATE_TITLE
+		publishCameraStop()
+	}
+	messageFailure(sendEmail(message, ACT_MESSAGE))
+	valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
+	return valid
+}
+
 func GetCommonFault() (string, int) {
 	max := 0
 	fault_string := "None"
@@ -61,7 +75,7 @@ func checkState() {
 		if SubscribedMessagesMap[message_id].valid == true {
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			if first {
-				PublishEmailRequest(ADMIN_ROLE)
+				publishEmailRequest(ADMIN_ROLE)
 				first = false
 			}
 			switch {
@@ -144,10 +158,7 @@ func checkState() {
 				var monitor MonitorState
 				if email_changed {
 					json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &monitor)
-					SetState(true)
-					messageFailure(sendEmail(UPDATESTATE_TITLE, UPDATESTATE_MESSAGE))
-					SetState(monitor.State)
-					valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
+					valid := checkLogicMonitor(monitor)
 					if valid != "" {
 						log.Warn("Failed to publish")
 					} else {

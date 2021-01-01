@@ -24,7 +24,6 @@ var first bool
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
-	SetState(true)
 	email_changed = false
 	first = true
 
@@ -203,7 +202,6 @@ func StatusCheck() {
 	}
 }
 
-
 func Publish(message []byte, routingKey string) string {
 	if init_err == nil {
 		log.Debug(string(message))
@@ -224,7 +222,27 @@ func Publish(message []byte, routingKey string) string {
 	return ""
 }
 
-func PublishEmailRequest(role string) string {
+func publishCameraStart() string {
+	emailRequest, err := json.Marshal(&EmailRequest{
+		Role: ""})
+	if err != nil {
+		return "Failed to convert CameraStart"
+	} else {
+		return Publish(emailRequest, CAMERASTART)
+	}
+}
+
+func publishCameraStop() string {
+	emailRequest, err := json.Marshal(&EmailRequest{
+		Role: ""})
+	if err != nil {
+		return "Failed to convert CameraStop"
+	} else {
+		return Publish(emailRequest, CAMERASTOP)
+	}
+}
+
+func publishEmailRequest(role string) string {
 	emailRequest, err := json.Marshal(&EmailRequest{
 		Role: role})
 	if err != nil {

@@ -87,6 +87,8 @@ const MOTIONDETECTED string = "Motion.Detected"     //Level 7
 
 const DEVICEFOUND string = "Device.Found"
 const MONITORSTATE string = "Monitor.State"
+const CAMERASTART string = "Camera.Start"
+const CAMERASTOP string = "Camera.Stop"
 const EMAILREQUEST string = "Email.Request"
 const EMAILRESPONSE string = "Email.Response"
 const EVENTFH string = "Event.FH"
@@ -106,10 +108,11 @@ const DEVICEUNKNOWN_MESSAGE string = "A unknown device has joined the\n" +
 	"network. Device name: "
 
 //
-const UPDATESTATE_TITLE string = "Alarm has been de/activated"
-const UPDATESTATE_MESSAGE string = "The alarm state has been changed.\n" +
+const ACTIVATE_TITLE string = "Alarm has been activated"
+const ACT_MESSAGE string = "The alarm state has been changed.\n" +
 	"Please ensure that whoever enacted this " +
 	"was authorised to do so"
+const DEACTIVATE_TITLE string = "Alarm has been deactivated"
 
 //
 const UPDATESTATE string = "Motion state changed"

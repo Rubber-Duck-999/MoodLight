@@ -10,7 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var _state bool
 var _email string
 var _password string
 var _subject string
@@ -25,7 +24,6 @@ var _messages_sent int
 
 func init() {
 	log.Trace("Initialised message package")
-	_state = false
 	_subject = ""
 	_body = ""
 	_email = ""
@@ -34,16 +32,6 @@ func init() {
 	_from_name = ""
 	_to_email = ""
 	setDate()
-}
-
-func SetState(state bool) {
-	log.Debug("Requested to change our monitoring state")
-	log.Debug("State change from: ", _state, " to: ", state)
-	_state = state
-}
-
-func getState() bool {
-	return _state
 }
 
 func SetSettings(email string, password string, from_email string,
@@ -75,9 +63,8 @@ func sendLogsEmail() {
 	m.To = []string{_to_email}
 
 	//Attachments
-	var files = [7]string{"logs/DBM.txt", "logs/EVM.txt", "logs/oldFH.txt",
-		"logs/NAC.txt", "logs/SYP.txt", "logs/UP.txt",
-		"logs/cameramonitor.log"}
+	var files = [6]string{"logs/DBM.txt", "logs/EVM.txt", "logs/oldFH.txt",
+		"logs/NAC.txt", "logs/SYP.txt", "logs/UP.txt"}
 	for _, file := range files {
 		if Exists(file) {
 			if err := m.Attach(file); err != nil {
@@ -123,7 +110,7 @@ func checkCanSend() bool {
 func sendEmail(subject string, issue string) bool {
 	// compose the message
 	fatal := false
-	if _state && checkCanSend() {
+	if checkCanSend() {
 		log.Debug("Sending email")
 		_body = issue
 		m := email.NewMessage(subject, _body)
@@ -137,8 +124,6 @@ func sendEmail(subject string, issue string) bool {
 			log.Warn(err)
 			fatal = true
 		}
-	} else {
-		log.Warn("We cannot send an email currently as state: ", _state)
 	}
 	return fatal
 }
@@ -146,7 +131,7 @@ func sendEmail(subject string, issue string) bool {
 func sendAttachmentEmail(issue string, file string) bool {
 	// compose the message
 	fatal := false
-	if _state && checkCanSend() {
+	if checkCanSend() {
 		log.Debug("Sending email")
 		_body = issue
 		_subject = "Movement in Flat"
