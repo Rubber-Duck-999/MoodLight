@@ -106,7 +106,7 @@ const DEVICEBLOCKED_MESSAGE string = "A blocked device has joined the\n" +
 	"network. Device name: "
 const DEVICEUNKNOWN_MESSAGE string = "A unknown device has joined the\n" +
 	"network. Device name: "
-
+const IPADDRESS string = ". IP Address: "
 //
 const ACTIVATE_TITLE string = "Alarm has been activated"
 const ACT_MESSAGE string = "The alarm state has been changed.\n" +

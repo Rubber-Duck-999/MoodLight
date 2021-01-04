@@ -173,10 +173,10 @@ func checkState() {
 				if email_changed {
 					if device.Status == BLOCKED {
 						messageFailure(sendEmail(DEVICE_TITLE,
-							DEVICEBLOCKED_MESSAGE+device.Device_name))
+							DEVICEBLOCKED_MESSAGE+device.Device_name+IPADDRESS))
 					} else if device.Status == UNKNOWN {
 						messageFailure(sendEmail(DEVICE_TITLE,
-							DEVICEUNKNOWN_MESSAGE+device.Device_name))
+							DEVICEUNKNOWN_MESSAGE+device.Device_name+IPADDRESS))
 					}
 					SubscribedMessagesMap[message_id].valid = false
 				}
