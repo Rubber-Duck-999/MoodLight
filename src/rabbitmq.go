@@ -222,6 +222,17 @@ func Publish(message []byte, routingKey string) string {
 	return ""
 }
 
+func publishAlarmEvent(user string, state string) string {
+	alarm, err := json.Marshal(&AlarmEvent{
+		User:  user,
+		State: state})
+	if err != nil {
+		return "Failed to convert AlarmEvent"
+	} else {
+		return Publish(alarm, ALARMEVENT)
+	}
+}
+
 func publishCameraStart() string {
 	emailRequest, err := json.Marshal(&EmailRequest{
 		Role: ""})

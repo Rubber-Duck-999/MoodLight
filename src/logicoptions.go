@@ -42,15 +42,19 @@ func SetEmailSettings(email string, password string, from_name string) bool {
 
 func checkLogicMonitor(monitor MonitorState) string {
 	var message string
+	var state string
 	if monitor.State == true {
 		message = ACTIVATE_TITLE
+		state = "ON"
 		publishCameraStart()
 	} else {
+		state = "OFF"
 		message = DEACTIVATE_TITLE
 		publishCameraStop()
 	}
 	messageFailure(sendEmail(message, ACT_MESSAGE))
-	valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
+	valid := publishAlarmEvent("Admin", state)
+	valid = PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
 	return valid
 }
 

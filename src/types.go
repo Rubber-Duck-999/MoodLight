@@ -37,6 +37,11 @@ type EventFH struct {
 	EventTypeId string `json:"event_type_id"`
 }
 
+type AlarmEvent struct {
+	User  string `string:"user"`
+	State string `string:"state"`
+}
+
 type MapMessage struct {
 	message     string
 	routing_key string
@@ -91,6 +96,7 @@ const CAMERASTART string = "Camera.Start"
 const CAMERASTOP string = "Camera.Stop"
 const EMAILREQUEST string = "Email.Request"
 const EMAILRESPONSE string = "Email.Response"
+const ALARMEVENT string = "Alarm.Event"
 const EVENTFH string = "Event.FH"
 const STATUSFH string = "Status.FH"
 const GUIDUPDATE string = "GUID.Update"
