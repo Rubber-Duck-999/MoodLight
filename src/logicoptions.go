@@ -9,9 +9,6 @@ import (
 
 func messageFailure(issue bool) string {
 	fail := ""
-	if issue {
-		fail = PublishEventFH(COMPONENT, SERVERERROR, getTime(), "FH1")
-	}
 	return fail
 }
 
@@ -54,7 +51,6 @@ func checkLogicMonitor(monitor MonitorState) string {
 	}
 	messageFailure(sendEmail(message, ACT_MESSAGE))
 	valid := publishAlarmEvent("Admin", state)
-	valid = PublishEventFH(COMPONENT, UPDATESTATE, getTime(), "FH2")
 	return valid
 }
 

@@ -271,15 +271,3 @@ func PublishStatusFH() string {
 		return Publish(message, STATUSFH)
 	}
 }
-
-func PublishEventFH(component string, message string, time string, event_type_id string) string {
-	eventFH, err := json.Marshal(&EventFH{
-		Component:   component,
-		Time:        time,
-		EventTypeId: event_type_id})
-	if err != nil {
-		return "Failed to convert EventFH"
-	} else {
-		return Publish(eventFH, EVENTFH)
-	}
-}
