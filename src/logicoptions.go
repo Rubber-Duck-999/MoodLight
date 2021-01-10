@@ -74,25 +74,7 @@ func checkState() {
 	for message_id := range SubscribedMessagesMap {
 		if SubscribedMessagesMap[message_id].valid == true {
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
-			if first {
-				publishEmailRequest(ADMIN_ROLE)
-				first = false
-			}
 			switch {
-			case SubscribedMessagesMap[message_id].routing_key == EMAILRESPONSE:
-				var message EmailResponse
-				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				for _, account := range message.Accounts {
-					if account.Role == "admin" {
-						log.Warn("Correct role recieved")
-						SetEmail(account.Email)
-						SubscribedMessagesMap[message_id].valid = false
-						email_changed = true
-						sendEmail("Setting Up new email", "Admin Authorised")
-						checkState()
-					}
-				}
-
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
 				var message MotionDetected
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
@@ -144,15 +126,6 @@ func checkState() {
 				camera.Count++
 				status.DailyFaults = checkDay(status.DailyFaults)
 				SubscribedMessagesMap[message_id].valid = false
-
-			case SubscribedMessagesMap[message_id].routing_key == GUIDUPDATE:
-				var guidUpdate GUIDUpdate
-				log.Debug("GUID Update")
-				if email_changed {
-					json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &guidUpdate)
-					messageFailure(sendEmail(GUIDUPDATE_TITLE, GUIDUPDATE_MESSAGE+guidUpdate.GUID))
-					SubscribedMessagesMap[message_id].valid = false
-				}
 
 			case SubscribedMessagesMap[message_id].routing_key == MONITORSTATE:
 				var monitor MonitorState

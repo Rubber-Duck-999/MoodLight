@@ -119,13 +119,11 @@ func Subscribe() {
 	log.Trace("Beginning rabbitmq initialisation")
 	log.Warn("Rabbitmq error:", init)
 	if init == nil {
-		var topics = [6]string{
+		var topics = [4]string{
 			FAILURE,
 			MOTIONDETECTED,
 			MONITORSTATE,
 			DEVICEFOUND,
-			GUIDUPDATE,
-			EMAILRESPONSE,
 		}
 
 		err := ch.ExchangeDeclare(
@@ -250,16 +248,6 @@ func publishCameraStop() string {
 		return "Failed to convert CameraStop"
 	} else {
 		return Publish(emailRequest, CAMERASTOP)
-	}
-}
-
-func publishEmailRequest(role string) string {
-	emailRequest, err := json.Marshal(&EmailRequest{
-		Role: role})
-	if err != nil {
-		return "Failed to convert EmailRequest"
-	} else {
-		return Publish(emailRequest, EMAILREQUEST)
 	}
 }
 
