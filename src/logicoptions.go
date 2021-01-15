@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"os"
 	"time"
+	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -23,10 +25,10 @@ func checkDay(daily int) int {
 	}
 }
 
-func SetEmailSettings(email string, password string, from_name string) bool {
+func SetEmailSettings(email string, password string, from_name string, to_email string) bool {
 	shutdown_valid := false
 	log.Trace("Email is: ", email)
-	SetSettings(email, password, email, from_name)
+	SetSettings(email, password, to_email, from_name)
 	setup_invalid := TestEmail()
 	log.Debug("Email test success : ", !setup_invalid)
 	if setup_invalid {
@@ -54,6 +56,31 @@ func checkLogicMonitor(monitor MonitorState) string {
 	return valid
 }
 
+func cleanUp() {
+
+	dirname := "." + string(filepath.Separator)
+
+	d, err := os.Open(dirname)
+	if err != nil {
+		log.Warn(err)
+	}
+	defer d.Close()
+
+	files, err := d.Readdir(-1)
+	if err != nil {
+		log.Warn(err)
+	}
+
+	for _, file := range files {
+		if file.Mode().IsRegular() {
+			if filepath.Ext(file.Name()) == ".jpg" {
+				os.Remove(file.Name())
+				log.Warn("Deleted ", file.Name())
+			}
+		}
+	}
+}
+
 func GetCommonFault() (string, int) {
 	max := 0
 	fault_string := "None"
@@ -75,11 +102,14 @@ func checkState() {
 		if SubscribedMessagesMap[message_id].valid == true {
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
-			case SubscribedMessagesMap[message_id].routing_key == MOTIONDETECTED:
-				var message MotionDetected
+			case SubscribedMessagesMap[message_id].routing_key == MOTIONRESPONSE:
+				log.Debug("Received a Motion Response Topic")
+				var message MotionResponse
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
+				SubscribedMessagesMap[message_id].valid = false
 				if email_changed {
 					messageFailure(sendEmail("We have movement in the flat", MOTIONMESSAGE))
+					cleanUp()
 					SubscribedMessagesMap[message_id].valid = false
 				}
 
@@ -90,15 +120,6 @@ func checkState() {
 						"firewall has shut down then network"))
 					status.DailyFaults = checkDay(status.DailyFaults)
 					network.Count++
-					SubscribedMessagesMap[message_id].valid = false
-				}
-
-			case SubscribedMessagesMap[message_id].routing_key == FAILUREDATABASE:
-				log.Debug("Received a database failure message")
-				if email_changed {
-					messageFailure(sendEmail("Data failure HouseGuard", "Serious Database failure"))
-					status.DailyFaults = checkDay(status.DailyFaults)
-					database.Count++
 					SubscribedMessagesMap[message_id].valid = false
 				}
 

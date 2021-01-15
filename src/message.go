@@ -63,7 +63,7 @@ func sendLogsEmail() {
 	m.To = []string{_to_email}
 
 	//Attachments
-	var files = [6]string{"logs/DBM.txt", "logs/EVM.txt", "logs/oldFH.txt",
+	var files = [4]string{"logs/oldFH.txt",
 		"logs/NAC.txt", "logs/SYP.txt", "logs/UP.txt"}
 	for _, file := range files {
 		if Exists(file) {

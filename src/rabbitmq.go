@@ -120,8 +120,8 @@ func Subscribe() {
 	log.Warn("Rabbitmq error:", init)
 	if init == nil {
 		var topics = [4]string{
+			MOTIONRESPONSE,
 			FAILURE,
-			MOTIONDETECTED,
 			MONITORSTATE,
 			DEVICEFOUND,
 		}
@@ -232,8 +232,8 @@ func publishAlarmEvent(user string, state string) string {
 }
 
 func publishCameraStart() string {
-	emailRequest, err := json.Marshal(&EmailRequest{
-		Role: ""})
+	emailRequest, err := json.Marshal(&Basic{
+		Message: ""})
 	if err != nil {
 		return "Failed to convert CameraStart"
 	} else {
@@ -242,8 +242,8 @@ func publishCameraStart() string {
 }
 
 func publishCameraStop() string {
-	emailRequest, err := json.Marshal(&EmailRequest{
-		Role: ""})
+	emailRequest, err := json.Marshal(&Basic{
+		Message: ""})
 	if err != nil {
 		return "Failed to convert CameraStop"
 	} else {
