@@ -34,16 +34,15 @@ func init() {
 	setDate()
 }
 
-func SetSettings(email string, password string, from_email string,
-	from_name string) {
+func SetSettings(email string, password string, name string, to_email string) {
 	log.Trace("Setting settings")
 	_subject = "Test Email"
 	_body = ""
 	_email = email
 	_password = password
-	_from_email = from_email
-	_from_name = from_name
-	_to_email = from_email
+	_from_email = email
+	_from_name = name
+	_to_email = to_email
 }
 
 func SetEmail(email string) {
@@ -59,7 +58,7 @@ func TestEmail() bool {
 func sendLogsEmail() {
 	log.Debug("Sending logs email")
 	m := email.NewMessage("HouseGuard Daily Logs", "All included")
-	m.From = mail.Address{Name: _from_name, Address: _from_email}
+	m.From = mail.Address{Name: _from_name, Address: _email}
 	m.To = []string{_to_email}
 
 	//Attachments

@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"time"
 	"path/filepath"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -28,7 +28,7 @@ func checkDay(daily int) int {
 func SetEmailSettings(email string, password string, from_name string, to_email string) bool {
 	shutdown_valid := false
 	log.Trace("Email is: ", email)
-	SetSettings(email, password, to_email, from_name)
+	SetSettings(email, password, from_name, to_email)
 	setup_invalid := TestEmail()
 	log.Debug("Email test success : ", !setup_invalid)
 	if setup_invalid {
