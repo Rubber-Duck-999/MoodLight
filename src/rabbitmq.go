@@ -19,45 +19,17 @@ var software Fault
 var access Fault
 var camera Fault
 var day int
-var email_changed bool
 var first bool
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
-	email_changed = false
 	first = true
 
 	status = StatusFH{
-		DailyFaults:  0,
-		CommonFaults: "N/A"}
+		LastFault: "N/A"}
 
 	_, _, day := time.Now().Date()
 	log.Debug("Current day is set to: ", day)
-
-	network = Fault{
-		Count: 0,
-		Name:  "Network Fault",
-	}
-
-	database = Fault{
-		Count: 0,
-		Name:  "Database Fault",
-	}
-
-	software = Fault{
-		Count: 0,
-		Name:  "Software Fault",
-	}
-
-	access = Fault{
-		Count: 0,
-		Name:  "Alarm Access Fault",
-	}
-
-	camera = Fault{
-		Count: 0,
-		Name:  "Camera Fault",
-	}
 
 }
 
@@ -191,8 +163,7 @@ func Subscribe() {
 }
 
 func StatusCheck() {
-	status.CommonFaults, status.DailyFaults = GetCommonFault()
-	valid := PublishStatusFH()
+	valid := publishStatusFH()
 	if valid != "" {
 		log.Warn("Failed to publish")
 	} else {
@@ -231,6 +202,13 @@ func publishAlarmEvent(user string, state string) string {
 	}
 }
 
+func publishMotion() string {
+	alarm, _ := json.Marshal(&AlarmEvent{
+		User:  "",
+		State: ""})
+	return Publish(alarm, MOTIONEVENT)
+}
+
 func publishCameraStart() string {
 	emailRequest, err := json.Marshal(&Basic{
 		Message: ""})
@@ -251,7 +229,7 @@ func publishCameraStop() string {
 	}
 }
 
-func PublishStatusFH() string {
+func publishStatusFH() string {
 	message, err := json.Marshal(&status)
 	if err != nil {
 		return "Failed to convert StatusFH"

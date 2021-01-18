@@ -21,7 +21,7 @@ func TestPublishFailRabbit(t *testing.T) {
 		SetEmailSettings(data.EmailSettings.Email,
 			data.EmailSettings.Password,
 			data.EmailSettings.Name,
-			data.EmailSettings.To_email)
+			data.EmailSettings.ToEmail)
 		SetPassword(data.MessageSettings.Password)
 	}
 	init := SetConnection()
@@ -56,7 +56,7 @@ func TestLogicNotExpected(t *testing.T) {
 	checkState()
 	if SubscribedMessagesMap[1].valid == true {
 		t.Error("Failure")
-	} else if SubscribedMessagesMap[1].routing_key == EVENTFH {
+	} else if SubscribedMessagesMap[1].routing_key == ALARMEVENT {
 		t.Log(SubscribedMessagesMap[1].routing_key)
 		t.Error("Failure")
 	}
@@ -64,10 +64,10 @@ func TestLogicNotExpected(t *testing.T) {
 
 func TestLogicValid(t *testing.T) {
 	value := "{ 'time': 12:00:34, 'type': 'Camera', 'severity': 3 }"
-	messages("Event.DBM", value)
+	messages("Motion.Response", value)
 	if SubscribedMessagesMap[2].valid == false {
 		t.Error("Failure")
-	} else if SubscribedMessagesMap[2].routing_key == EVENTFH {
+	} else if SubscribedMessagesMap[2].routing_key == CAMERASTART {
 		t.Log(SubscribedMessagesMap[2].routing_key)
 		t.Error("Failure")
 	}
@@ -75,11 +75,11 @@ func TestLogicValid(t *testing.T) {
 
 func TestLogicRequestPower(t *testing.T) {
 	value := "{ 'time': 12:00:34, 'type': 'Camera', 'severity': 3 }"
-	messages("Event.FH", value)
+	messages("Motion.Respons", value)
 	checkState()
 	if SubscribedMessagesMap[3].valid == true {
 		t.Error("Failure")
-	} else if SubscribedMessagesMap[2].routing_key == EVENTFH {
+	} else if SubscribedMessagesMap[2].routing_key == CAMERASTART {
 		t.Log(SubscribedMessagesMap[2].routing_key)
 		t.Error("Failure")
 	}
@@ -87,7 +87,7 @@ func TestLogicRequestPower(t *testing.T) {
 
 func TestGetTime(t *testing.T) {
 	time := getTime()
-	if !strings.Contains(time, "2020") {
+	if !strings.Contains(time, "2021") {
 		t.Error("Failure")
 	}
 }
@@ -99,8 +99,8 @@ func TestGetTimeFail(t *testing.T) {
 	}
 }
 
-func TestEventFH(t *testing.T) {
-	valid := PublishEventFH(COMPONENT, UPDATESTATE, getTime())
+func TestStatusFH(t *testing.T) {
+	valid := publishStatusFH()
 	if valid != "" {
 		t.Error("Failure")
 	}
@@ -108,7 +108,7 @@ func TestEventFH(t *testing.T) {
 
 func TestEmailSettingsFail(t *testing.T) {
 	shutdown_valid := SetEmailSettings("email_to", "password", "from_name", "to_email")
-	if shutdown_valid {
+	if !shutdown_valid {
 		t.Error("Failure")
 	}
 }
@@ -119,7 +119,7 @@ func TestIssueNotice(t *testing.T) {
 	checkState()
 	if SubscribedMessagesMap[4].valid != false {
 		t.Error("Failure")
-	} else if SubscribedMessagesMap[4].routing_key == EVENTFH {
+	} else if SubscribedMessagesMap[4].routing_key == CAMERASTART {
 		t.Log(SubscribedMessagesMap[4].routing_key)
 		t.Error("Failure")
 	}
@@ -141,7 +141,6 @@ func TestRequestPower(t *testing.T) {
 func TestAllFailures(t *testing.T) {
 	value := "{ 'time': '14:00:20', 'failure_type': 'Power loss' }"
 	messages(FAILURENETWORK, value)
-	messages(FAILUREDATABASE, value)
 	messages(FAILURECOMPONENT, value)
 	messages(FAILUREACCESS, value)
 	value = "{ 'state': true }"
@@ -157,26 +156,8 @@ func TestAllFailures(t *testing.T) {
 }
 
 func TestEmailSettings(t *testing.T) {
-	SetState(true)
-	failure := SetEmailSettings("", "", "", "") 
+	failure := SetEmailSettings("", "", "", "")
 	if failure == false {
 		t.Error("Failure")
 	}
-}
-
-func TestGetCommonFault(t *testing.T) {
-	network.Count = 3
-	expected := GetCommonFault()
-	if expected != "Network Fault" {
-		t.Error("Failure - ", expected)
-	}
-}
-
-func TestGetCommonFaultMultiple(t *testing.T) {
-	network.Count = 3
-	software.Count = 3
-	expected := GetCommonFault()
-	if expected != "Software Fault" {
-		t.Error("Failure - ", expected)
-	}	
 }

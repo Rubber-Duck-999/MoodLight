@@ -49,8 +49,7 @@ type DeviceFound struct {
 }
 
 type StatusFH struct {
-	DailyFaults  int    `json:"daily_faults"`
-	CommonFaults string `json:"common_faults"`
+	LastFault string `json:"last_fault"`
 }
 
 type Fault struct {
@@ -64,6 +63,7 @@ const FAILURECOMPONENT string = "Failure.Component" //Level 3
 const FAILUREACCESS string = "Failure.Access"       //Level 6
 const FAILURECAMERA string = "Failure.Camera"       // Level 2
 const MOTIONRESPONSE string = "Motion.Response"
+const MOTIONEVENT string = "Motion.Event"
 
 const DEVICEFOUND string = "Device.Found"
 const MONITORSTATE string = "Monitor.State"
@@ -82,6 +82,7 @@ const DEVICEBLOCKED_MESSAGE string = "A blocked device has joined the\n" +
 const DEVICEUNKNOWN_MESSAGE string = "A unknown device has joined the\n" +
 	"network. Device name: "
 const IPADDRESS string = ". IP Address: "
+
 //
 const ACTIVATE_TITLE string = "Alarm has been activated"
 const ACT_MESSAGE string = "The alarm state has been changed.\n" +

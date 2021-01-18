@@ -46,7 +46,7 @@ func TestConfigGetNull(t *testing.T) {
 	if data.EmailSettings.Name == "" {
 		t.Error("Failure")
 	}
-	if data.EmailSettings.To_email == "" {
+	if data.EmailSettings.ToEmail == "" {
 		t.Error("Failure")
 	}
 }
@@ -66,7 +66,7 @@ func TestConfigGetAll(t *testing.T) {
 	if data.EmailSettings.Name != "rubber-duck-999" {
 		t.Error("Failure")
 	}
-	if data.EmailSettings.To_email != "external@gmail" {
+	if data.EmailSettings.ToEmail != "cheese" {
 		t.Error("Failure")
 	}
 }
@@ -86,7 +86,7 @@ func TestConfigFail(t *testing.T) {
 	if data.EmailSettings.Name != "" {
 		t.Error("Failure")
 	}
-	if data.EmailSettings.To_email != "" {
+	if data.EmailSettings.ToEmail != "" {
 		t.Error("Failure")
 	}
 }
@@ -106,7 +106,7 @@ func TestIncorrectConfig(t *testing.T) {
 	if data.EmailSettings.Name != "" {
 		t.Error("Failure")
 	}
-	if data.EmailSettings.To_email != "" {
+	if data.EmailSettings.ToEmail != "" {
 		t.Error("Failure")
 	}
 }
