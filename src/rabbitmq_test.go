@@ -28,14 +28,6 @@ func TestPublishFailRabbit(t *testing.T) {
 	if init != nil {
 		t.Error("Failure")
 	}
-	failure := messageFailure(true)
-	if failure != "" {
-		if strings.Contains(FAILUREPUBLISH, failure) {
-			t.Error("Failure")
-		} else if strings.Contains(FAILURECONVERT, failure) {
-			t.Error("Failure")
-		}
-	}
 }
 
 func TestLogicNetwork(t *testing.T) {
