@@ -6,8 +6,7 @@ Created on 10 Oct 2019
 
 #!/usr/bin/env python
 import pika
-import sys, time, json
-import subprocess
+import time
 ###
 # Fault Handler Integrator
 # This is to show how the FH could manage on
@@ -56,7 +55,7 @@ count = 0
 queue_empty = False
 
 def callback(ch, method, properties, body):
-    print("Received %r:%r" % (method.routing_key, body))
+    print("Received %r:%r" % (method.routing_key, ch, method, body))
     print("Count is : ", count)
     time.sleep(0.3)
 
