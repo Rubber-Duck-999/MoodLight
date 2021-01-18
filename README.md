@@ -2,6 +2,10 @@
 
 ![Go](https://github.com/Rubber-Duck-999/HouseGuard-FaultHandler/workflows/Go/badge.svg)
 
+[![DeepSource](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler/?ref=repository-badge)
+
+[![DeepSource](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler.svg/?label=resolved+issues&show_trend=true)](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler/?ref=repository-badge)
+
 HouseGuard-FaultHandler is the Golang component that is part of the HouseGuard solution. 
 It's role to respond to faults on the system and report them to the operator.
 
