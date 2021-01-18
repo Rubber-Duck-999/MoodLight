@@ -12,7 +12,6 @@ import (
 
 var _email string
 var _password string
-var _subject string
 var _body string
 var _from_email string
 var _from_name string
@@ -24,7 +23,6 @@ var _messages_sent int
 
 func init() {
 	log.Trace("Initialised message package")
-	_subject = ""
 	_body = ""
 	_email = ""
 	_password = ""
@@ -36,7 +34,6 @@ func init() {
 
 func SetSettings(email string, password string, name string, to_email string) {
 	log.Trace("Setting settings")
-	_subject = "Test Email"
 	_body = ""
 	_email = email
 	_password = password
@@ -121,36 +118,6 @@ func sendEmail(subject string, issue string) bool {
 		if err := email.Send("smtp.zoho.eu:587", auth, m); err != nil {
 			log.Warn("Found a issue")
 			log.Warn(err)
-			fatal = true
-		}
-	}
-	return fatal
-}
-
-func sendAttachmentEmail(issue string, file string) bool {
-	// compose the message
-	fatal := false
-	if checkCanSend() {
-		log.Debug("Sending email")
-		_body = issue
-		_subject = "Movement in Flat"
-		m := email.NewMessage(_subject, _body)
-		m.From = mail.Address{Name: _from_name, Address: _from_email}
-		m.To = []string{_to_email}
-
-		//Attachments
-		if Exists(file) {
-			if err := m.Attach(file); err != nil {
-				log.Fatal(err)
-				fatal = true
-			}
-		}
-
-		// send it
-		auth := smtp.PlainAuth("", _email, _password, "smtp.zoho.eu")
-		if emailErr := email.Send("smtp.zoho.eu:587", auth, m); emailErr != nil {
-			log.Warn("Found a issue")
-			log.Warn(emailErr)
 			fatal = true
 		}
 	}

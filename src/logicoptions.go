@@ -8,11 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func messageFailure(issue bool) string {
-	fail := ""
-	return fail
-}
-
 func SetEmailSettings(email string, password string, from_name string, to_email string) bool {
 	shutdown_valid := false
 	log.Trace("Email is: ", email)
@@ -21,7 +16,6 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 	log.Debug("Email test success : ", !setup_invalid)
 	if setup_invalid {
 		shutdown_valid = true
-		messageFailure(shutdown_valid)
 		log.Error("We have major flaw")
 	}
 	return shutdown_valid
@@ -30,7 +24,7 @@ func SetEmailSettings(email string, password string, from_name string, to_email 
 func checkLogicMonitor(monitor MonitorState) string {
 	var message string
 	var state string
-	if monitor.State == true {
+	if monitor.State {
 		message = ACTIVATE_TITLE
 		state = "ON"
 		publishCameraStart()
@@ -39,7 +33,7 @@ func checkLogicMonitor(monitor MonitorState) string {
 		message = DEACTIVATE_TITLE
 		publishCameraStop()
 	}
-	messageFailure(sendEmail(message, ACT_MESSAGE))
+	sendEmail(message, ACT_MESSAGE)
 	valid := publishAlarmEvent("Admin", state)
 	return valid
 }
@@ -71,22 +65,22 @@ func cleanUp() {
 
 func checkState() {
 	for message_id := range SubscribedMessagesMap {
-		if SubscribedMessagesMap[message_id].valid == true {
+		if SubscribedMessagesMap[message_id].valid {
 			log.Debug("Message routing key is: ", SubscribedMessagesMap[message_id].routing_key)
 			switch {
 			case SubscribedMessagesMap[message_id].routing_key == MOTIONRESPONSE:
 				log.Debug("Received a Motion Response Topic")
 				var message MotionResponse
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
-				messageFailure(sendEmail("We have movement in the flat", MOTIONMESSAGE))
+				sendEmail("We have movement in the flat", MOTIONMESSAGE)
 				cleanUp()
 				publishMotion()
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILURENETWORK:
 				log.Debug("Received a network failure message")
-				messageFailure(sendEmail("Server unable to respond", "The network is not responding or the\n "+
-					"firewall has shut down then network"))
+				sendEmail("Server unable to respond", "The network is not responding or the\n "+
+					"firewall has shut down then network")
 				status.LastFault = FAILURENETWORK
 				StatusCheck()
 				SubscribedMessagesMap[message_id].valid = false
@@ -95,14 +89,14 @@ func checkState() {
 				var message FailureMessage
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &message)
 				log.Warn("Failure in component: ", message.Failure_type)
-				messageFailure(sendEmail("Software not responding", "Serious Component failure, \n"+
-					"please troubleshoot this issue: "+message.Failure_type))
+				sendEmail("Software not responding", "Serious Component failure, \n"+
+					"please troubleshoot this issue: "+message.Failure_type)
 				status.LastFault = FAILURECOMPONENT
 				StatusCheck()
 				SubscribedMessagesMap[message_id].valid = false
 
 			case SubscribedMessagesMap[message_id].routing_key == FAILUREACCESS:
-				messageFailure(sendEmail("Multiple pin attempts", "Please check the alarm immediately"))
+				sendEmail("Multiple pin attempts", "Please check the alarm immediately")
 				status.LastFault = FAILUREACCESS
 				StatusCheck()
 				SubscribedMessagesMap[message_id].valid = false
@@ -127,11 +121,11 @@ func checkState() {
 				var device DeviceFound
 				json.Unmarshal([]byte(SubscribedMessagesMap[message_id].message), &device)
 				if device.Status == BLOCKED {
-					messageFailure(sendEmail(DEVICE_TITLE,
-						DEVICEBLOCKED_MESSAGE+device.Device_name+IPADDRESS+device.Ip_address))
+					sendEmail(DEVICE_TITLE,
+						DEVICEBLOCKED_MESSAGE+device.Device_name+IPADDRESS+device.Ip_address)
 				} else if device.Status == UNKNOWN {
-					messageFailure(sendEmail(DEVICE_TITLE,
-						DEVICEUNKNOWN_MESSAGE+device.Device_name+IPADDRESS+device.Ip_address))
+					sendEmail(DEVICE_TITLE,
+						DEVICEUNKNOWN_MESSAGE+device.Device_name+IPADDRESS+device.Ip_address)
 				}
 				SubscribedMessagesMap[message_id].valid = false
 

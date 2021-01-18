@@ -13,24 +13,12 @@ var ch *amqp.Channel
 var init_err error
 var password string
 var status StatusFH
-var network Fault
-var database Fault
-var software Fault
-var access Fault
-var camera Fault
-var day int
-var first bool
 
 func init() {
 	log.Trace("Initialised rabbitmq package")
-	first = true
 
 	status = StatusFH{
 		LastFault: "N/A"}
-
-	_, _, day := time.Now().Date()
-	log.Debug("Current day is set to: ", day)
-
 }
 
 func SetPassword(pass string) {
@@ -58,21 +46,19 @@ func messages(routing_key string, value string) {
 		SubscribedMessagesMap = make(map[uint32]*MapMessage)
 		messages(routing_key, value)
 	} else {
-		if key_id >= 0 {
-			_, valid := SubscribedMessagesMap[key_id]
-			if valid {
-				log.Debug("Key already exists, checking next field: ", key_id)
-				if key_id == 100 {
-					key_id = 0
-				}
-				key_id++
-				messages(routing_key, value)
-			} else {
-				log.Debug("Key does not exists, adding new field: ", key_id)
-				entry := MapMessage{value, routing_key, getTime(), true}
-				SubscribedMessagesMap[key_id] = &entry
-				key_id++
+		_, valid := SubscribedMessagesMap[key_id]
+		if valid {
+			log.Debug("Key already exists, checking next field: ", key_id)
+			if key_id == 100 {
+				key_id = 0
 			}
+			key_id++
+			messages(routing_key, value)
+		} else {
+			log.Debug("Key does not exists, adding new field: ", key_id)
+			entry := MapMessage{value, routing_key, getTime(), true}
+			SubscribedMessagesMap[key_id] = &entry
+			key_id++
 		}
 	}
 }
@@ -148,7 +134,7 @@ func Subscribe() {
 			for d := range msgs {
 				log.Trace("Sending message to callback")
 				log.Trace(d.RoutingKey)
-				s := string(d.Body[:])
+				s := string(d.Body)
 				messages(d.RoutingKey, s)
 				log.Debug("Checking states of received messages")
 				checkState()
