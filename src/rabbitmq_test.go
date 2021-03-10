@@ -2,11 +2,7 @@
 
 package main
 
-import (
-	"strings"
-	"testing"
-)
-
+/*
 // Check that State is set
 // then run this test will prove it is set
 func TestPublishFailRabbit(t *testing.T) {
@@ -152,4 +148,4 @@ func TestEmailSettings(t *testing.T) {
 	if failure == false {
 		t.Error("Failure")
 	}
-}
+}*/
