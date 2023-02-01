@@ -1,30 +1,29 @@
-# HouseGuard-FaultHandler
+# MoodLight
 
-![Go](https://github.com/Rubber-Duck-999/HouseGuard-FaultHandler/workflows/Go/badge.svg)
+Application that uses the Unicorn pHAT to display colours
 
-[![DeepSource](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler/?ref=repository-badge)
+## Install
 
-[![DeepSource](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler.svg/?label=resolved+issues&show_trend=true)](https://deepsource.io/gh/Rubber-Duck-999/HouseGuard-FaultHandler/?ref=repository-badge)
+`pip3 install -r requirements`
 
-HouseGuard-FaultHandler is the Golang component that is part of the HouseGuard solution. 
-It's role to respond to faults on the system and report them to the operator.
+## Enviro
 
-## Installation
+pHAT that has 128 LEDs
 
-This can be installed on multiple OS
+<img src="https://cdn.shopify.com/s/files/1/0174/1800/products/UnicornHATMini_1of3_1500x1500.jpg?v=1587738443" alt="Pimoroni Unicorn pHAT" width="200"/>
 
-```bash
-sh '''export GOPATH="${PWD}"
-    cd src
-    go build
-'''
-```
+[Link](https://shop.pimoroni.com/products/unicorn-hat-mini?variant=31657688498259)
 
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+## Testing
 
-Please make sure to update tests as appropriate.
+`cd tests`
+`python3 -m pytest`
 
-## License
-[MIT](https://github.com/Rubber-Duck-999/HouseGuard-FaultHandler/blob/master/LICENSE.txt)
+## Logging
+
+Logging to a file under user on linux
+
+`/home/{user}/sync/MoodLight.log`
+
+Im using this as Im using this folder to sync multiple devices
