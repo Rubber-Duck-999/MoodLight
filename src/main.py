@@ -1,7 +1,7 @@
 ''' Mood Light program
 '''
 #!/usr/bin/env python3
-# pylint: disable=consider-using-f-string, report-missing-imports, import-error, logging-format-interpolation
+# pylint: disable=consider-using-f-string import-error logging-format-interpolation bare-except
 
 import time
 import os
@@ -11,9 +11,9 @@ import json
 import requests
 try:
     from unicornhatmini import UnicornHATMini
-except ImportError or ModuleNotFoundError:
-    from src.mock_hat import UnicornHATMini
-from src import utilities
+except:
+    from mock_hat import UnicornHATMini
+import utilities
 
 
 fileName: str = '/home/{}/sync/MoodLight.log'
