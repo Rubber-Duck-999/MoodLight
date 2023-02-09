@@ -82,11 +82,9 @@ class Colours:
             response = requests.get(self.server, timeout=5)
             if response.status_code == 200:
                 logging.info("Requests successful")
-                if 'mood' in response.json():
+                if 'state' in response.json():
                     logging.info(response.json())
-                    mood = response.json()['mood'][0]
-                    logging.info(mood)
-                    self.state = mood['state']
+                    self.state = response.json()['state']
                 logging.info('Mood Light is set to: {}'.format(self.state))
             else:
                 logging.error('Response: {}'.format(response))
