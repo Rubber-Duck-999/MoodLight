@@ -13,7 +13,7 @@
 #define CS1 RPI_GPIO_P1_26 // GPIO 7
 
 const uint8_t CMD_SOFT_RESET = 0xCC;
-const uint8_t CMD_GLOBAL_BRIGHTNESS = 0x37;
+const uint8_t CMD_GLOBAL_BRIGHTNESS = 0xFF;
 const uint8_t CMD_COM_PIN_CTRL = 0x41;
 const uint8_t CMD_ROW_PIN_CTRL = 0x42;
 const uint8_t CMD_WRITE_DISPLAY = 0x80;
